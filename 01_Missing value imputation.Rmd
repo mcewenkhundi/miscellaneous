@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Resources consulted:
 
 * https://www.coursera.org/learn/missing-data/home/welcome
+* The paper on the implementation of the mice package
 
 ```{r r echo=FALSE, warning=FALSE, message=FALSE}
 library(mice)
@@ -35,6 +36,18 @@ marginplot(nhanes2[,c("chl","bmi")], col = mdc(1:2), cex = 1.2, cex.lab = 1.2, c
 ```{r}
 nhanes2.imp <- mice(nhanes2, seed = 23)
 
+summary(nhanes2.imp)
 
+complete(nhanes2.imp, action = 1)
+```
+### Regression example including imputed data
+```{r}
+fit <- with(nhanes2.imp, lm(chl ~ age + bmi))
+round(summary(pool(fit)), 2)
+```
+### Diagnostic accuracy of imputed values
+```{r}
+#Checking the values of bmi
+nhanes2.imp$imp$bmi
 ```
 
