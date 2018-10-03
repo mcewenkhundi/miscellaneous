@@ -16,7 +16,9 @@ knitr::opts_chunk$set(echo = TRUE)
 Resources consulted:
 
 * https://www.coursera.org/learn/missing-data/home/welcome
+  * This has videos
 * The paper on the implementation of the mice package
+  * This has well illustrated examples
 
 ```{r r echo=FALSE, warning=FALSE, message=FALSE}
 library(mice)
