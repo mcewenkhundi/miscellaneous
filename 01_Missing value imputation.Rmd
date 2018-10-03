@@ -1,0 +1,40 @@
+---
+title: "Missing value imputation"
+author: "McEwen Khundi"
+date: "3 October 2018"
+output: html_document:
+    keep_md: TRUE
+    theme: cosmo
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Using the mice package to impute missing 
+Resources consulted:
+
+* https://www.coursera.org/learn/missing-data/home/welcome
+
+```{r r echo=FALSE, warning=FALSE, message=FALSE}
+library(mice)
+library(VIM)
+```
+
+```{r r echo=FALSE, warning=FALSE, message=FALSE}
+nhanes2
+
+head(nhanes2)
+
+summary(nhanes2)
+
+marginplot(nhanes2[,c("chl","bmi")], col = mdc(1:2), cex = 1.2, cex.lab = 1.2, cex.numbers = 1.3, pch = 19)
+```
+
+```{r}
+nhanes2.imp <- mice(nhanes2, seed = 23)
+
+
+```
+
