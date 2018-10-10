@@ -1,3 +1,5 @@
+#Creating dummy variables from categorical variables
+
 library(fastDummies)
 
 crime <- data.frame(city = c("SF", "SF", "NYC"),
