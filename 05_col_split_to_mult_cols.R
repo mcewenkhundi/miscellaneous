@@ -12,4 +12,4 @@ before <- data.frame(
 before %>%
   separate(type, c("foo", "bar"), "_and_")
 
-before
+
