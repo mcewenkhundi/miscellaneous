@@ -18,7 +18,7 @@ iris %>%
 # A named list of functions
 iris %>%
   group_by(Species) %>%
-  summarise(across(starts_with("Sepal"), list(mean = mean, sd = sd)))
+  summarise(across(starts_with("Sepal"), list(mean = ~mean(.x, na.rm = TRUE), sd = sd)))
 
 # Use the names argument to control the output names
 iris %>%
