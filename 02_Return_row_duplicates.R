@@ -15,5 +15,10 @@ df %>%
 df %>%
   group_by(id) %>%
   filter(row_number() == max(row_number()))
+
+#This shows all the duplicates in the dataset
+set.seed(199037)
+tibble(x = sample(LETTERS, 50, replace = TRUE)) %>% count(x) %>% filter(n > 1)
+
          
          
