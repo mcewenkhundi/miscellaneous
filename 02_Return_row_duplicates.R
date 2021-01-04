@@ -18,6 +18,7 @@ df %>%
 
 #This shows all the duplicates in the dataset
 set.seed(199037)
+tibble(x = sample(LETTERS, 50, replace = TRUE)) %>% add_count(x) %>% filter(n > 1)
 tibble(x = sample(LETTERS, 50, replace = TRUE)) %>% count(x) %>% filter(n > 1)
 
          

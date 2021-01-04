@@ -12,8 +12,11 @@ fish_encounters %>%
   )
 
 # Generate column names from multiple variables
-us_rent_income %>%
+us_rent<- us_rent_income %>% 
   pivot_wider(names_from = variable, values_from = c(estimate, moe))
+
+us_rent %>%
+  pivot_longer(c(-GEOID,-NAME),names_to = c("estimate","variable"), values_to = "values", names_sep = "_")
 
 # Can perform aggregation with values_fn
 warpbreaks <- as_tibble(warpbreaks[c("wool", "tension", "breaks")])

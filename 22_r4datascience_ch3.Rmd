@@ -1,0 +1,256 @@
+---
+title: "R for data science book review: Data visualisation chapter 3"
+author: "McEwen Khundi"
+date: "11/12/2020"
+output: html_document
+---
+
+![](C:/Users/mkhundi/Dropbox/My PC (LP256)/Documents/R/projects/miscellaneous/figures_ch3r4ds/IMG_20201112_213616.jpg){width="588"}
+
+## 0. Welcome to the R party
+
+![](C:/Users/mkhundi/Dropbox/My PC (LP256)/Documents/R/projects/miscellaneous/figures_ch3r4ds/IMG_20200510_070957.jpg){width="547"}
+
+![](C:/Users/mkhundi/Dropbox/My PC (LP256)/Documents/R/projects/miscellaneous/figures_ch3r4ds/IMG_20201112_213134.jpg){width="595"}
+
+## 1. Setup
+
+A brief introduction to tidyverse
+
+![](C:/Users/mkhundi/Dropbox/My PC (LP256)/Documents/R/projects/miscellaneous/figures_ch3r4ds/tidyverse_fig.png){width="149mm" height="60mm"}
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+## 2. Data that will be used
+
+The `mpg` dataframe is found in the `ggplot2` package
+
+`mpg` contains observations collected by the US Environmental Protection Agency on 38 models of car.
+
+Do cars with big engines use more fuel than cars with small engines?
+
+1.  `displ`, a car's engine size, in litres.
+
+2.  `hwy`, a car's fuel efficiency on the highway, in miles per gallon (mpg). A car with a low fuel efficiency consumes more fuel than a car with a high fuel efficiency when they travel the same distance.
+
+```{r mpg}
+mpg
+
+#check the variables in mpg
+?mpg
+```
+
+## 3. Creating a ggplot graph to explore the relationship between engine size vs. fuel efficiency
+
+Use variables `displ` on the x-axis and `hwy` on the y-axis
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+Lets interpret the output:
+
+1.  Negative relationship
+
+2.  Explain the ggplot functions and arguments
+
+## 4. Turning a ggplot template into a graph
+
+```{r, eval=FALSE}
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+
+```
+
+## 5. Aesthetic mappings in ggplot2
+
+1.  X
+
+2.  Y
+
+3.  Fill
+
+4.  color
+
+5.  shape
+
+6.  linetype
+
+7.  alpha
+
+8.  
+
+**Scaling**: ggplot2 will automatically assign a unique level of the aesthetic (here a unique color) to each unique value of the variable and a legend is added as well.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+#> Warning: Using size for a discrete variable is not advised.
+```
+
+## 6. Facets
+
+Splitting your plot into **facets**, subplots that each display one subset of the data.
+
+Using a single variable
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class)
+```
+
+## 7. Facet by two variables
+
+Pay attention to the arguments of `facet_grid`
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+
+```
+
+## 8. Geometric objects in ggplot2
+
+A **geom** is the geometrical object that a plot uses to represent data.
+
+For example, bar charts use bar geoms, line charts use line geoms, boxplots use boxplot geoms etc
+
+Every geom function in ggplot2 takes a `mapping` argument. However, not every aesthetic works with every geom.
+
+```{r}
+# left
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+# right
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+
+#Add the aesthetic for linetype
+
+```
+
+## 9. Geometric objects in ggplot2
+
+Reproduce the graph below
+
+![](C:/Users/mkhundi/Dropbox/My PC (LP256)/Documents/R/projects/miscellaneous/figures_ch3r4ds/geom_aesthetics.PNG)
+
+```{r, eval=FALSE}
+# make changes to reproduce the graph above
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv)) +
+  geom_smooth(mapping = aes(x=  displ, y = hwy,color= drv, linetype = drv)) 
+ 
+```
+
+## 10. Geometric objects in ggplot2
+
+The effect of the placement of the esthetics
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth()
+```
+
+## **11. Statistical transformations**
+
+Many graphs, like scatterplots, plot the raw values of your dataset. Other graphs, like bar charts, calculate new values
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut))
+
+diamonds %>%
+  count(cut)
+
+?geom_bar
+
+ggplot(data = diamonds) + 
+  stat_count(mapping = aes(x = cut))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = stat(count), group = 1))
+
+#geom col
+
+demo <- tribble(
+  ~cut,         ~freq,
+  "Fair",       1610,
+  "Good",       4906,
+  "Very Good",  12082,
+  "Premium",    13791,
+  "Ideal",      21551
+)
+
+ggplot(data = demo) +
+  geom_bar(mapping = aes(x = cut, y = freq), stat = "identity")
+```
+
+## **12. Position adjustments**
+
+You can colour a bar chart using either the `colour` aesthetic, or, more usefully, `fill`
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, colour = cut))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+
+
+
+```
+
+## **13. Coordinate systems**
+
+`coord_flip()` switches the x and y axes
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() +
+  coord_flip()
+
+```
+
+```{r}
+ggplot(mpg, aes(x = factor(1), fill = drv)) +
+  geom_bar()
+
+ggplot(mpg, aes(x = factor(1), fill = drv)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y")
+```
+
+## **14. The layered grammar of graphics**
+
+    ggplot(data = <DATA>) + 
+      <GEOM_FUNCTION>(
+         mapping = aes(<MAPPINGS>),
+         stat = <STAT>, 
+         position = <POSITION>
+      ) +
+      <COORDINATE_FUNCTION> +
+      <FACET_FUNCTION>
