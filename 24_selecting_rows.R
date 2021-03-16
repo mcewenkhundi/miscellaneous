@@ -64,11 +64,19 @@ df %>%
   dplyr::mutate(if_all(where(is.numeric), ~ .x > 0))
 
 
+library(dplyr)
+df <- tibble(id = 1:6, w = 10:15, x = 20:25, y = 30:35, z = 40:45)
 
+df %>% 
+  rowwise() %>%
+  mutate(total = sum(c_across(w:z))) %>% 
+  ungroup() %>% 
+  mutate(across(w:z, ~ . / total))
 
+#why isn't the syntax for for c_across(w:x, sum)
+#Be free to use any other example dataset that you are comfortable with
 
-
-
+#Thanks
 
 
 
