@@ -93,6 +93,19 @@ x %>%
 
 ```{r}
 #Can add practice code if necessary 
+
+x %>% 
+  left_join(y, by = "key")
+
+?right_join
+?full_join
+
+y %>% 
+  right_join(x, by = "key")
+
+y %>% 
+  full_join(x, by = "key")
+
 ```
 
 <br>
@@ -118,7 +131,14 @@ y <- tribble(
      1, "y1",
      2, "y2"
 )
-left_join(x, y, by = "key")
+
+y %>%
+left_join(x, by = "key")
+
+
+left_join(y, x, by = "key")
+
+right_join(y, x, by = "key")
 ```
 
 <br>
@@ -136,7 +156,12 @@ Filtering joins match observations in the same way as mutating joins, but affect
     ![](join-anti.png)
 
     ```{r}
-    #practice code
+semi_join(x, y, by = "key")
+    
+    
+    anti_join(x, y, by = "key")
+    
+ 
     ```
 
     <br>
@@ -146,6 +171,9 @@ Filtering joins match observations in the same way as mutating joins, but affect
     ![](sql_joins.PNG)
 
     Stata merge ?
+     1,2,3
+     
+     
 
     <br>
 
