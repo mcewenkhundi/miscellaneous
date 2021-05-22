@@ -1,7 +1,7 @@
 ---
 title: "R for data science Book club"
 
-subtitle: "WHAT THIS FILE DOES HERE"
+subtitle: "Chapter 13 review"
 
 author: |
   | McEwen

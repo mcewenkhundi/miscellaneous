@@ -1,0 +1,351 @@
+---
+title: "R for data science book club"
+
+subtitle: "Chapter 14: strings review "
+
+author: |
+  | McEwen Khundi
+  |
+  | London School of Hygiene & Tropical Medicine, London, UK
+  | Malawi-Liverpool-Wellcome Clinical Research Programme, Blantyre, Malawi
+  |
+
+date: | 
+  | `r format(Sys.time(), "%B %d, %Y")`
+  |
+  | Table of Contents:
+output: 
+  html_document:
+    df_print: paged
+    theme: spacelab
+    toc: true
+---
+
+<br>
+
+## 1. Chapter 14 Strings
+
+Quick housekeeping/reminders
+
+-   What the group is for
+
+    -   R4DS book club
+
+    -   We meet once every Friday 3pm
+
+-   If you need me to slow down, let me know
+
+-   Take time to read the chapter
+
+-   Plan to teach one of the lessons
+
+<br>
+
+## 2. Set-up
+
+Load all required packages for analysis.
+
+```{r setup, message=FALSE}
+library(tidyverse)    #for data manipulation
+library(pmthemes)     #for ggplot themes
+library(knitr)        #for tables
+
+```
+
+<br>
+
+## 3. Import dataset
+
+We will mostly use inbuilt datasets
+
+```{r import}
+
+
+
+```
+
+<br>
+
+## 5. Why learn regular expressions?
+
+-   Not all text processing can be handled with a function
+
+-   Some parts of unstructured text are semi-structured
+
+-   What other benefits can you think of?
+
+<br>
+
+## 6. String basics
+
+```{r}
+#Combining multiple strings
+string_vector  <- c("string", "in", "a", "vector")
+
+string_vector
+
+```
+
+```{r}
+#Counting length
+str_length(c("Check", "out this cool string ", NA, NA_character_))
+
+```
+
+```{r}
+#Combining
+# Notice the recycling happening here
+str_c("Check out ", c("Lincoln", "Omaha", "Scotts Bluff"), ", NE")
+```
+
+```{r}
+# Collapse into single string
+str_c(c("x", "y", "z"), collapse = ", ")
+
+```
+
+```{r}
+#Subsetting
+# State names
+state.name[1:3]
+```
+
+```{r}
+# State abbreviations
+str_sub(state.name[1:3], 1, 3)
+```
+
+```{r}
+# Last three letters 
+str_sub(state.name[1:3], -3,-1 )
+
+```
+
+```{r}
+#Convert case
+# Case to lower
+
+state_lower <- str_to_lower(state.name[1:3])
+state_lower
+```
+
+```{r}
+# Case to upper
+str_to_upper(state_lower)
+```
+
+<br>
+
+## 7. Using regular expressions
+
+Can use str_view() and str_view_all() for explorations
+
+```{r}
+#R has dates
+month.name
+```
+
+```{r}
+#Exact matching
+month.name %>%
+as_tibble() %>%
+mutate(
+match = str_detect(value, "ber")
+)
+
+```
+
+### Any character .
+
+```{r}
+# Months that have a u in between characters
+month.name %>%
+as_tibble() %>%
+mutate(
+match = str_detect(value, "(.u.)")
+)
+```
+
+### Using anchors (\^, \$)
+
+If you begin with power (\^) , you end up with money (\$) .
+
+-   Special patterns that match more than one character
+
+-   ? 0 or 1, \* 0 or more, + 1 or more
+
+-   Exact notation {n}, {n,}, {,m}, {n, m}
+
+-   \\\\d : Matches any digit
+
+-   \\\\s : Matches any whitespace (e.g., space, tab, newline)
+
+-   [abc] : matches a, b, or c
+
+-   [\^abc] : matches anything except a, b, or c
+
+-   [ \$.\*\|()] : match special characters
+
+```{r}
+# Months that begin with J, end in y
+month.name %>%
+as_tibble() %>%
+mutate(
+match = str_detect(value, "^J[a-z]*y$")
+)
+```
+
+```{r}
+
+# No gravy
+str_detect(c("grey", "gray", "gravy"), "gr(e|a)y")
+
+```
+
+### Capturing repetitions
+
+```{r}
+x  <- "1888 is the longest year in Roman numerals: MDCCCCLXXXVIII"
+str_extract(x, "C{2}")
+
+```
+
+```{r}
+str_extract(x, "C{2,}")
+```
+
+```{r}
+fruit
+```
+
+```{r}
+#Grouping and backreferences
+data_extracted = str_extract(fruit, "(..)\\1")
+data_extracted_df = as_tibble(data_extracted) 
+data_extracted_df = drop_na(data_extracted_df)
+
+
+
+```
+
+```{r}
+#Grouping and backreferences
+string_var = str_detect(fruit, "(..)\\1")
+string_var
+string_var_df = as_tibble(string_var) 
+string_var_df
+string_var_df = drop_na(string_var_df)
+string_var_df
+
+
+drop_na(as_tibble(str_detect(fruit, "(..)\\1")))
+
+str_detect(fruit, "(..)\\1") %>%
+ as_tibble() %>%
+ drop_na()
+
+
+```
+
+### Reading files that have a common ending
+
+Same structure files but data in multiple files
+
+Files saved in names that have a pattern
+
+```{r}
+
+files <- dir(
+  "ae_attendances/","^\\d{4}-\\d{2}-\\d{2}\\.csv$",
+  full.names = TRUE
+)
+
+files
+```
+
+```{r}
+#you do this and go in the directory  and delete the other files
+#Not that every thing endig with .csv was picked up
+files <- dir(
+  "ae_attendances/","\\.csv$",
+  full.names = TRUE
+)
+
+files
+```
+
+### Selecting variables using regexp
+
+![](irisimage.jfif)
+
+```{r}
+#use the iris dataset
+iris
+```
+
+```{r}
+#Using inbuilt functions in select
+#starts_with, ends_with, contains and matches
+```
+
+### Reading the multiple files into R
+
+```{r}
+# for one file
+read_csv(file = files[1])
+```
+
+```{r}
+
+data_list <- vector("list", length = length(files))
+
+for(i in seq_along(data_list)){
+  
+  data_list[[i]] <- read_csv(file = files[i])
+}
+
+
+```
+
+```{r}
+data_list
+
+
+data_df <- bind_rows(data_list)
+data_df
+```
+
+```{r}
+#Using functional programming style to import multiple files
+
+data_fn_df <- map_dfr(files, read_csv)
+
+```
+
+```{r}
+#Using functional programming style to import multiple files
+
+data_fn_df <- map_dfr(files, read_csv, col_type = "ccddd")
+
+```
+
+<br>
+
+## X. Reproducibility
+
+This reproduction of the analysis was run by:
+
+```{r sysinfo, echo=FALSE, message=FALSE, comment=NA, warning=FALSE}
+
+sysinfo <- Sys.info()
+
+sysinfo <- data.frame(keyName=names(sysinfo), value=sysinfo, row.names=NULL)
+
+sysinfo %>% kable()
+```
+
+Analysis was run at **`r Sys.time()`**, and using the following Session Info:
+
+```{r sessioninfo, echo=FALSE, results='markdown', message=FALSE, comment=NA, warning=FALSE}
+sessionInfo()
+```
