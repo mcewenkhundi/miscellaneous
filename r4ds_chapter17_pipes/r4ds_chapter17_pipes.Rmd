@@ -1,0 +1,187 @@
+---
+title: "R for data science book club"
+
+subtitle: "Introduction to programming (pipes)"
+
+author: |
+  | McEwen Khundi
+  |
+  | London School of Hygiene & Tropical Medicine, UK
+  | Malawi-Liverpool-Wellcome Clinical Research Programme, Blantyre, Malawi
+  |
+
+date: | 
+  | `r format(Sys.time(), "%B %d, %Y")`
+  |
+  | Table of Contents:
+output: 
+  html_document:
+    df_print: paged
+    theme: spacelab
+    toc: true
+---
+
+<br>
+
+## 1. Backgound
+
+<br>
+
+## 2. Set-up
+
+Load all required packages for analysis.
+
+```{r setup, message=FALSE}
+library(tidyverse)    #for data manipulation
+library(knitr)        #for tables
+
+```
+
+<br>
+
+## 3. Chapter 17 introduction
+
+![](data_science_concept.png)
+
+-   Writing code is similar in many ways to writing prose. Rewriting is the key to clarity.
+
+-   The first expression of your ideas is unlikely to be particularly clear.
+
+-   You can save a lot of time later trying to recreate what your code did.
+
+    -   Reproducibilitycrisis in science
+
+-   This doesn't mean you should rewrite every function
+
+### Next chapters in this section
+
+-   In pipes chapter18, you will dive deep into the pipe, %\>%, and learn more about how it work
+
+-    In functions chapter19, you'll learn how to write functions which let you extract out repeated code so that it can be easily reused.
+
+-   chapter20, R's data structures, provided by vectors
+
+-    Chapter21 Tools for iteration that let you do similar things again and again.
+
+```{r import}
+
+
+
+```
+
+## 4. Chapter 18 Pipes
+
+-   The pipe, [`%>%`](https://magrittr.tidyverse.org/reference/pipe.html), comes from the **magrittr**
+
+-   Packages in the tidyverse load [`%>%`](https://magrittr.tidyverse.org/reference/pipe.html) for you automatically, so you don't usually load magrittr explicitly
+
+### 5.  Task explore alternative ways of using R using (calling) R 
+
+-   (Penguins dataset) Includes measurements for penguin species, island in Palmer Archipelago, size (flipper length, body mass, bill dimensions), and sex. This is a subset of penguins_raw.
+
+-   Using the [`penguins`](https://github.com/allisonhorst/palmerpenguins) dataset, calculate the average body mass for Adelie penguins on different islands.
+
+    ![](lter_penguins.png)
+
+```{r tidy}
+#install.packages("palmerpenguins")
+library(palmerpenguins)
+
+#Find out more about penguins by typing ?penguins
+View(penguins)
+
+#Saving original copy
+penguins_o <- penguins
+
+```
+
+### 6 Conceptual framework  (solving the problem)
+
+-   Filter `penguins` to only keep observations where the species is "Adelie"
+
+-   Group the filtered `penguins` data frame by island
+
+-   Summarize the grouped and filtered `penguins` data frame by calculating the average body mas
+
+-   **But how do we implement this in code?**
+
+### 7  By saving intermediate steps
+
+**Why is this problematic?**
+
+```{r}
+penguins_1 <- filter(penguins, species == "Adelie")
+penguins_2 <- group_by(penguins_1, island)
+penguins_3 <- summarize(penguins_2, body_mass = mean(body_mass_g, na.rm = TRUE))
+penguins_3
+```
+
+### 8  By overwriting the original
+
+Similar to above
+
+```{r}
+penguins <- filter(penguins, species == "Adelie")
+penguins <- group_by(penguins, island)
+penguins <- summarize(penguins, body_mass = mean(body_mass_g, na.rm = TRUE))
+penguins
+```
+
+### 9 Function composition
+
+```{r}
+summarize(
+  group_by(
+    filter(
+      penguins_o,
+      species == "Adelie"
+    ),
+    island
+  ),
+  body_mass = mean(body_mass_g, na.rm = TRUE)
+)
+
+#Same as 
+summarize(group_by(filter(penguins, species == "Adelie"), island), body_mass = mean(body_mass_g, na.rm = TRUE))
+```
+
+### 10 Pipes approach
+
+**focuses on verbs, not nouns**
+
+```{r}
+penguins %>%
+  filter(species == "Adelie") %>%
+  group_by(island) %>%
+  summarize(body_mass = mean(body_mass_g, na.rm = TRUE))
+
+```
+
+### 11. Additional resources
+
+-   [Lesson adapted from Pipes in R](https://cfss.uchicago.edu/notes/pipes/#:~:text=Pipes%20are%20an%20extremely%20useful,code%20and%20combine%20multiple%20operations.)
+
+-   [R4DS chapter 18](https://r4ds.had.co.nz/pipes.html)
+
+-   [More on the data Penguins](https://twitter.com/allison_horst/status/1287772985630191617)
+
+<br>
+
+## X. Reproducibility
+
+This reproduction of the analysis was run by:
+
+```{r sysinfo, echo=FALSE, message=FALSE, comment=NA, warning=FALSE}
+
+sysinfo <- Sys.info()
+
+sysinfo <- data.frame(keyName=names(sysinfo), value=sysinfo, row.names=NULL)
+
+sysinfo %>% kable()
+```
+
+Analysis was run at **`r Sys.time()`**, and using the following Session Info:
+
+```{r sessioninfo, echo=FALSE, results='markdown', message=FALSE, comment=NA, warning=FALSE}
+sessionInfo()
+```
