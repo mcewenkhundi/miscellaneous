@@ -1,0 +1,115 @@
+---
+title: "R4Ds book club"
+subtitle: "Options for variable categorisation/recoding"
+
+author: |
+  | McEwen Khundi
+  |
+  | London School of Hygiene & Tropical Medicine, London, UK
+  | Malawi-Liverpool-Wellcome Clinical Research Programme, Blantyre, Malawi
+  |
+
+date: | 
+  | `r format(Sys.time(), "%B %d, %Y")`
+  |
+  | Table of Contents:
+output: 
+  html_document:
+    df_print: paged
+    theme: spacelab
+    toc: true
+---
+
+<br>
+
+## 1. Backgound
+
+
+<br>
+
+## 2. Set-up
+
+Load all required packages for analysis.
+
+```{r setup, message=FALSE}
+library(tidyverse)    #for data manipulation
+library(pmthemes)     #for ggplot themes
+library(knitr)        #for tables
+
+```
+
+<br>
+
+## 3. Import datasets
+
+Import data required for the analysis.
+
+```{r import}
+library(palmerpenguins)
+
+penguins <- palmerpenguins::penguins
+
+```
+
+<br>
+
+## 4. Changing values of a factor variable
+Use function in forcats i.e fct_recode
+
+```{r tidy}
+penguins <- penguins %>%
+  mutate(sex2 = fct_recode(sex, "MALE"="male", "FEMALE" = "female"),
+         .after = sex)
+```
+
+
+<br>
+
+## 5. Changing a variable into two categories into two categories
+Use if_else
+s 
+```{r}
+mean(penguins$body_mass_g,na.rm =TRUE )
+penguins <- penguins %>%
+  mutate(above_body_mass_g = if_else(body_mass_g >= 4201.754, ">= mean mass", "< mean mass"),
+         .after = body_mass_g)
+```
+
+### you can pass a function as an argument to another function
+```{r}
+
+penguins <- penguins %>%
+  mutate(above_body_mass_g = if_else(body_mass_g >= mean(penguins$body_mass_g,na.rm =TRUE ), ">= mean mass", "< mean mass"),
+         .after = body_mass_g)
+```
+
+<br>
+
+## 5. Changing a variable into more than 2 categories
+Use case_when
+
+```{r}
+
+```
+
+
+<br>
+
+## X. Reproducibility
+
+This reproduction of the analysis was run by: 
+
+```{r sysinfo, echo=FALSE, message=FALSE, comment=NA, warning=FALSE}
+
+sysinfo <- Sys.info()
+
+sysinfo <- data.frame(keyName=names(sysinfo), value=sysinfo, row.names=NULL)
+
+sysinfo %>% kable()
+```
+
+Analysis was run at **`r Sys.time()`**, and using the following Session Info:
+
+```{r sessioninfo, echo=FALSE, results='markdown', message=FALSE, comment=NA, warning=FALSE}
+sessionInfo()
+```
