@@ -1,0 +1,197 @@
+---
+title: "PROJECT TITLE HERE"
+
+subtitle: "WHAT THIS FILE DOES HERE"
+
+author: |
+  | McEwen Khundi
+  |
+  | London School of Hygiene & Tropical Medicine, London, UK
+  | Malawi-Liverpool-Wellcome Clinical Research Programme, Blantyre, Malawi
+  |
+
+date: | 
+  | `r format(Sys.time(), "%B %d, %Y")`
+  |
+  | Table of Contents:
+output: 
+  html_document:
+    df_print: paged
+    theme: spacelab
+    toc: true
+---
+
+<br>
+
+## 1. Backgound
+
+<br>
+
+## 2. Set-up
+
+Load all required packages for analysis.
+
+```{r setup, message=FALSE}
+library(tidyverse)    #for data manipulation
+library(pmthemes)     #for ggplot themes
+library(knitr)        #for tables
+
+```
+
+<br>
+
+## 3. Import datasets
+
+Import data required for the analysis.
+
+We will use the penguis data set
+
+```{r import}
+#install.packages("palmerpenguins")
+library(palmerpenguins)
+
+
+View(penguins)
+
+#save a copy of original df
+penguins_o <- penguins
+```
+
+<br>
+
+## 4. Functions ?
+
+-   Makes code easier to read
+
+-   Helps code to be concise, you only need to update code in only one place
+
+-   Reduce the chance of making mistakes
+
+### 5.  Task to demonstrate the importance of functions (Standardization/Scaling)
+
+-   Necessary when continuous independent variables are measured at different scales
+
+-   The idea is to rescale variables to have equal range or variance
+
+```{r tidy}
+
+penguins %>%
+  summarise(bill_length_mm = mean(bill_length_mm),
+            bill_depth_mm = mean(bill_depth_mm),
+            flipper_length_mm = mean(flipper_length_mm),
+            body_mass_g = mean(body_mass_g))
+
+
+```
+
+### 6.   Rescaling by Z scores
+
+-   Subtract each value by mean and devide by std.dev
+
+```{r}
+
+penguins$bill_length_mm <- (penguins$bill_length_mm - mean(penguins$bill_length_mm, na.rm = TRUE))/sd(penguins$bill_length_mm, na.rm = TRUE)
+
+penguins$bill_depth_mm <- (penguins$bill_depth_mm - mean(penguins$bill_depth_mm, na.rm = TRUE))/sd(penguins$bill_length_mm, na.rm = TRUE)
+
+penguins$flipper_length_mm <- (penguins$flipper_length_mm - mean(penguins$flipper_length_mm, na.rm = TRUE))/sd(penguins$flipper_length_mm, na.rm = TRUE)
+
+penguins$body_mass_g <- (penguins$body_mass_g - mean(penguins$body_mass_g, na.rm = TRUE))/sd(penguins$body_mass_g, na.rm = TRUE)
+```
+
+### 7.  First option for rescaling (Z score)
+
+-   Define (Z score) function in R
+
+```{r}
+rescale_meansd <- function (x) {
+  (x-mean(x,na.rm = TRUE))/sd(x, na.rm = TRUE)
+}
+```
+
+```{r}
+penguins <- penguins_o
+penguins$bill_length_mm <- rescale_meansd(penguins$bill_length_mm)
+penguins$bill_depth_mm <- rescale_meansd(penguins$bill_depth_mm)
+penguins$flipper_length_mm <- rescale_meansd(penguins$flipper_length_mm )
+penguins$body_mass_g <- rescale_meansd(penguins$body_mass_g)
+```
+
+### 8.  Adding some tests (Z score)
+
+-   Defensive programming
+
+-   What happens when we use the function on a character variable
+
+```{r}
+rescale_meansd(penguins$species)
+
+```
+
+```{r}
+rescale_meansd <- function (x) {
+  if(is.numeric(x) != TRUE){
+    stop("X must be numeric", call. = FALSE)
+  }
+
+  (x-mean(x,na.rm = TRUE))/sd(x, na.rm = TRUE)
+}
+
+```
+
+```{r}
+rescale_meansd(penguins$species)
+
+```
+
+### Lets check if it is still working
+
+```{r}
+rescale_meansd(penguins$bill_length_mm)
+
+```
+
+### 9.  Setting default arguments (Z score)
+
+```{r}
+rescale_meansd <- function (x, missing = FALSE) {
+  if(is.numeric(x) != TRUE){
+    stop("X must be numeric", call. = FALSE)
+  }
+
+  (x-mean(x, na.rm=missing))/sd(x, na.rm=missing)
+}
+
+```
+
+```{r}
+rescale_meansd(penguins$bill_length_mm)
+
+```
+
+### 10 References
+
+-   [More on the data Penguins](https://twitter.com/allison_horst/status/1287772985630191617)
+
+-   [Chapter 19 functions](https://r4ds.had.co.nz/functions.html)
+
+<br>
+
+## X. Reproducibility
+
+This reproduction of the analysis was run by:
+
+```{r sysinfo, echo=FALSE, message=FALSE, comment=NA, warning=FALSE}
+
+sysinfo <- Sys.info()
+
+sysinfo <- data.frame(keyName=names(sysinfo), value=sysinfo, row.names=NULL)
+
+sysinfo %>% kable()
+```
+
+Analysis was run at **`r Sys.time()`**, and using the following Session Info:
+
+```{r sessioninfo, echo=FALSE, results='markdown', message=FALSE, comment=NA, warning=FALSE}
+sessionInfo()
+```
