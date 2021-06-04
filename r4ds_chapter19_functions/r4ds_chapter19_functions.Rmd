@@ -1,7 +1,7 @@
 ---
-title: "PROJECT TITLE HERE"
+title: "R4ds book club"
 
-subtitle: "WHAT THIS FILE DOES HERE"
+subtitle: "Chapter19 Functions"
 
 author: |
   | McEwen Khundi
@@ -67,7 +67,7 @@ penguins_o <- penguins
 
 -   Reduce the chance of making mistakes
 
-### 5.  Task to demonstrate the importance of functions (Standardization/Scaling)
+### 5. Task to demonstrate the importance of functions (Standardization/Scaling)
 
 -   Necessary when continuous independent variables are measured at different scales
 
@@ -84,7 +84,7 @@ penguins %>%
 
 ```
 
-### 6.   Rescaling by Z scores
+### 6. Rescaling by Z scores
 
 -   Subtract each value by mean and devide by std.dev
 
@@ -99,7 +99,7 @@ penguins$flipper_length_mm <- (penguins$flipper_length_mm - mean(penguins$flippe
 penguins$body_mass_g <- (penguins$body_mass_g - mean(penguins$body_mass_g, na.rm = TRUE))/sd(penguins$body_mass_g, na.rm = TRUE)
 ```
 
-### 7.  First option for rescaling (Z score)
+### 7. First option for rescaling (Z score)
 
 -   Define (Z score) function in R
 
@@ -117,7 +117,7 @@ penguins$flipper_length_mm <- rescale_meansd(penguins$flipper_length_mm )
 penguins$body_mass_g <- rescale_meansd(penguins$body_mass_g)
 ```
 
-### 8.  Adding some tests (Z score)
+### 8. Adding some tests (Z score)
 
 -   Defensive programming
 
@@ -151,10 +151,14 @@ rescale_meansd(penguins$bill_length_mm)
 
 ```
 
-### 9.  Setting default arguments (Z score)
+### 9. Passing arguments arguments (Z score)
+
+-   Passing arguments to other functions
+
+-   Reading error messages
 
 ```{r}
-rescale_meansd <- function (x, missing = FALSE) {
+rescale_meansd <- function (x, missing) {
   if(is.numeric(x) != TRUE){
     stop("X must be numeric", call. = FALSE)
   }
@@ -167,6 +171,22 @@ rescale_meansd <- function (x, missing = FALSE) {
 ```{r}
 rescale_meansd(penguins$bill_length_mm)
 
+```
+
+### 9. Setting default  values to arguments (Z score)
+
+```{r}
+rescale_meansd <- function (x, missing = TRUE) {
+  if(is.numeric(x) != TRUE){
+    stop("X must be numeric", call. = FALSE)
+  }
+
+  (x-mean(x, na.rm=missing))/sd(x, na.rm=missing)
+}
+```
+
+```{r}
+rescale_meansd(penguins$bill_length_mm)
 ```
 
 ### 10 References

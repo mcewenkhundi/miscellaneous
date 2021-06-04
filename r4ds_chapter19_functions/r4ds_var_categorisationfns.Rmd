@@ -24,7 +24,6 @@ output:
 
 ## 1. Backgound
 
-
 <br>
 
 ## 2. Set-up
@@ -54,6 +53,7 @@ penguins <- palmerpenguins::penguins
 <br>
 
 ## 4. Changing values of a factor variable
+
 Use function in forcats i.e fct_recode
 
 ```{r tidy}
@@ -62,12 +62,12 @@ penguins <- penguins %>%
          .after = sex)
 ```
 
-
 <br>
 
-## 5. Changing a variable into two categories into two categories
-Use if_else
-s 
+## 5. Changing a numerical variable into into two categories
+
+Use if_else s
+
 ```{r}
 mean(penguins$body_mass_g,na.rm =TRUE )
 penguins <- penguins %>%
@@ -76,6 +76,7 @@ penguins <- penguins %>%
 ```
 
 ### you can pass a function as an argument to another function
+
 ```{r}
 
 penguins <- penguins %>%
@@ -86,18 +87,34 @@ penguins <- penguins %>%
 <br>
 
 ## 5. Changing a variable into more than 2 categories
-Use case_when
+
+-   Use case_when
+
+-   Task (Create a new categorical variable that has levels ("Mass \>=mean and Male","Mass \< mean and Male", "Female")
 
 ```{r}
 
 ```
 
+Plot a bar graph of the var above
+
+```{r}
+
+```
+
+### Other functions to consider
+
+-   cut()
+
+-   str_replace
+
+-   str_sub()
 
 <br>
 
-## X. Reproducibility
+## 6. Reproducibility
 
-This reproduction of the analysis was run by: 
+This reproduction of the analysis was run by:
 
 ```{r sysinfo, echo=FALSE, message=FALSE, comment=NA, warning=FALSE}
 
