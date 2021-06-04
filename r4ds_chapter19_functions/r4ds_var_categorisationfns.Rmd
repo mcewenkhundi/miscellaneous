@@ -48,6 +48,8 @@ library(palmerpenguins)
 
 penguins <- palmerpenguins::penguins
 
+View(penguins)
+
 ```
 
 <br>
@@ -60,6 +62,8 @@ Use function in forcats i.e fct_recode
 penguins <- penguins %>%
   mutate(sex2 = fct_recode(sex, "MALE"="male", "FEMALE" = "female"),
          .after = sex)
+
+penguins
 ```
 
 <br>
@@ -90,9 +94,18 @@ penguins <- penguins %>%
 
 -   Use case_when
 
--   Task (Create a new categorical variable that has levels ("Mass \>=mean and Male","Mass \< mean and Male", "Female")
+-   Task (Create a new categorical variable that has levels ("Mass >=mean and Male","Mass < mean and Male", "Female")
 
 ```{r}
+penguins <- penguins %>%
+  mutate(body_mass_male_cat = case_when(
+    body_mass_g >= mean(body_mass_g, na.rm =T) & sex == "male" ~ "Mass >=mean and Male",
+    body_mass_g < mean(body_mass_g, na.rm =T) & sex == "male" ~ "Mass < mean and Male",
+    !is.na(body_mass_g) ~ "Female"
+    
+  ), .after = body_mass_g)
+4201.754
+penguins
 
 ```
 

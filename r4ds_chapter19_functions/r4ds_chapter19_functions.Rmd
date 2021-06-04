@@ -67,6 +67,7 @@ penguins_o <- penguins
 
 -   Reduce the chance of making mistakes
 
+
 ### 5. Task to demonstrate the importance of functions (Standardization/Scaling)
 
 -   Necessary when continuous independent variables are measured at different scales
@@ -75,11 +76,12 @@ penguins_o <- penguins
 
 ```{r tidy}
 
+View(penguins)
 penguins %>%
-  summarise(bill_length_mm = mean(bill_length_mm),
-            bill_depth_mm = mean(bill_depth_mm),
-            flipper_length_mm = mean(flipper_length_mm),
-            body_mass_g = mean(body_mass_g))
+summarise(bill_length_mm = mean(bill_length_mm, na.rm = TRUE),
+            bill_depth_mm = mean(bill_depth_mm, na.rm = TRUE),
+            flipper_length_mm = mean(flipper_length_mm, na.rm = TRUE),
+            body_mass_g = mean(body_mass_g,, na.rm = TRUE))
 
 
 ```
@@ -92,7 +94,7 @@ penguins %>%
 
 penguins$bill_length_mm <- (penguins$bill_length_mm - mean(penguins$bill_length_mm, na.rm = TRUE))/sd(penguins$bill_length_mm, na.rm = TRUE)
 
-penguins$bill_depth_mm <- (penguins$bill_depth_mm - mean(penguins$bill_depth_mm, na.rm = TRUE))/sd(penguins$bill_length_mm, na.rm = TRUE)
+penguins$bill_depth_mm <- (penguins$bill_depth_mm - mean(penguins$bill_depth_mm, na.rm = TRUE))/sd(penguins$bill_depth_mm, na.rm = TRUE)
 
 penguins$flipper_length_mm <- (penguins$flipper_length_mm - mean(penguins$flipper_length_mm, na.rm = TRUE))/sd(penguins$flipper_length_mm, na.rm = TRUE)
 
@@ -115,6 +117,8 @@ penguins$bill_length_mm <- rescale_meansd(penguins$bill_length_mm)
 penguins$bill_depth_mm <- rescale_meansd(penguins$bill_depth_mm)
 penguins$flipper_length_mm <- rescale_meansd(penguins$flipper_length_mm )
 penguins$body_mass_g <- rescale_meansd(penguins$body_mass_g)
+
+penguins
 ```
 
 ### 8. Adding some tests (Z score)
@@ -158,7 +162,7 @@ rescale_meansd(penguins$bill_length_mm)
 -   Reading error messages
 
 ```{r}
-rescale_meansd <- function (x, missing) {
+rescale_meansd <- function (x, missing = TRUE) {
   if(is.numeric(x) != TRUE){
     stop("X must be numeric", call. = FALSE)
   }
@@ -173,7 +177,7 @@ rescale_meansd(penguins$bill_length_mm)
 
 ```
 
-### 9. Setting default  values to arguments (Z score)
+### 9. Setting default values to arguments (Z score)
 
 ```{r}
 rescale_meansd <- function (x, missing = TRUE) {
