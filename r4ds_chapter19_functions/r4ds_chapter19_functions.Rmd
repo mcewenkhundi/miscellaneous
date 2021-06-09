@@ -316,8 +316,21 @@ scatter_mass_numdep <- function(data_df,numdep ,title_txt, y_txt) {
 ```
 
 ```{r}
-scatter_mass_numdep(penguins, numdep = bill_length_mm, y_txt = "Bill length mm", title_txt = "Penguin body mass (g) vs Bill length (mm)" )
+scatter_mass_numdep(penguins, numdep = bill_length_mm, y_txt = "Bill length (mm)", title_txt = "Penguin body mass (g) vs Bill length (mm)" )
 ```
+```{r}
+scatter_mass_numdep <- function(data_df,numdep , y_txt= "Bill length (mm)") {
+   ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = {{numdep}})) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE) + 
+  labs(x = "Body mass in grams", y = y_txt, title = glue::glue("Penguin body mass (g) vs {y_txt}"))
+ }
+```
+
+```{r}
+scatter_mass_numdep(penguins, numdep = bill_length_mm, y_txt = "Bill length (mm)")
+```
+
 
 ### 10 References
 
