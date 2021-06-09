@@ -33,7 +33,6 @@ Load all required packages for analysis.
 
 ```{r setup, message=FALSE}
 library(tidyverse)    #for data manipulation
-library(pmthemes)     #for ggplot themes
 library(knitr)        #for tables
 
 ```
@@ -51,7 +50,7 @@ We will use the penguis data set
 library(palmerpenguins)
 
 
-View(penguins)
+penguins
 
 #save a copy of original df
 penguins_o <- penguins
@@ -66,7 +65,6 @@ penguins_o <- penguins
 -   Helps code to be concise, you only need to update code in only one place
 
 -   Reduce the chance of making mistakes
-
 
 ### 5. Task to demonstrate the importance of functions (Standardization/Scaling)
 
@@ -191,6 +189,134 @@ rescale_meansd <- function (x, missing = TRUE) {
 
 ```{r}
 rescale_meansd(penguins$bill_length_mm)
+```
+
+### 10. Another example for setting up functions
+
+Using a scatter plot investigate the relationship between flipper_length_mm and body_mass_g separately for each island
+
+```{r}
+# Biscoe, Dream, Torgersen
+unique(penguins$island)
+
+#Create the three datasets for each island
+penguins_Biscoe <- penguins %>%
+                   filter(island=="Biscoe")
+
+penguins_Dream <- penguins %>%
+                   filter(island=="Dream")
+
+penguins_Torgersen <- penguins %>%
+                   filter(island=="Torgersen")
+
+
+```
+
+### Steps in developing a function
+
+-   Based on the code below identify which parts are changing and which are constant.
+
+-   The changing parts will be parsed as arguments.
+
+-   The constant parts will be set as defaults since their is not need to change them
+
+-   N.B. Missing variables are ignored by default in ggplot2 but with a warning message unlike in function mean() and sd() above.
+
+
+```{r}
+ggplot(data = penguins_Biscoe, mapping = aes(x= body_mass_g, y = flipper_length_mm )) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE)
+
+
+ggplot(data = penguins_Dream, mapping = aes(x=body_mass_g , y =  flipper_length_mm)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE)
+
+ggplot(data = penguins_Torgersen, mapping = aes(x= body_mass_g , y = flipper_length_mm )) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE)
+```
+
+```{r}
+scatter_mass_flipper_length <- function(data_df) {
+   ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE) + 
+  labs(x = "Body mass in grams", y = "Flipper length in mm")
+ }
+
+
+```
+
+# How can we improve the functions
+Maybe allow an argument for titles ?
+```{r}
+scatter_mass_flipper_length(penguins_Biscoe)
+scatter_mass_flipper_length(penguins_Dream)
+scatter_mass_flipper_length(penguins_Torgersen)
+```
+
+```{r}
+scatter_mass_flipper_length <- function(data_df, title_txt) {
+   ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE) + 
+  labs(x = "Body mass in grams", y = "Flipper length in mm", title = title_txt)
+ }
+
+
+```
+
+# How can we improve the function
+Maybe allow an argument for titles ?
+```{r}
+scatter_mass_flipper_length(penguins_Biscoe, title_txt = "Biscoe island: Penguin body mass (grams) vs flipper length")
+scatter_mass_flipper_length(penguins_Dream, title_txt = "Dream island: Penguin body mass (grams) vs flipper length")
+scatter_mass_flipper_length(penguins_Torgersen, title_txt = "Torgersen island:Penguin body mass (grams) vs flipper length")
+```
+
+# Any other improvement?
+Maybe allow an argument for titles ?
+Default title?
+
+```{r}
+scatter_mass_flipper_length(penguins)
+```
+
+
+```{r}
+scatter_mass_flipper_length <- function(data_df, title_txt = "Penguin body mass (grams) vs flipper length") {
+   ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE) + 
+  labs(x = "Body mass in grams", y = "Flipper length in mm", title = title_txt)
+ }
+
+
+```
+
+```{r}
+scatter_mass_flipper_length(penguins)
+```
+
+### Customise the function to allow mass versus any other dependent numerical variables
+-   Non standard evaluation (data-masking)
+
+-   https://ggplot2.tidyverse.org/articles/ggplot2-in-packages.html
+
+-   https://dplyr.tidyverse.org/articles/programming.html
+```{r}
+scatter_mass_numdep <- function(data_df,numdep ,title_txt, y_txt) {
+   ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = {{numdep}})) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE) + 
+  labs(x = "Body mass in grams", y = y_txt, title = title_txt)
+ }
+```
+
+```{r}
+scatter_mass_numdep(penguins, numdep = bill_length_mm, y_txt = "Bill length mm", title_txt = "Penguin body mass (g) vs Bill length (mm)" )
 ```
 
 ### 10 References

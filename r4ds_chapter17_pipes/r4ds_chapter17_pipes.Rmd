@@ -47,9 +47,7 @@ library(knitr)        #for tables
 
 -   The first expression of your ideas is unlikely to be particularly clear.
 
--   You can save a lot of time later trying to recreate what your code did.
-
-    -   Reproducibilitycrisis in science
+    -   Reproducibility
 
 -   This doesn't mean you should rewrite every function
 
@@ -57,11 +55,11 @@ library(knitr)        #for tables
 
 -   In pipes chapter18, you will dive deep into the pipe, %\>%, and learn more about how it work
 
--    In functions chapter19, you'll learn how to write functions which let you extract out repeated code so that it can be easily reused.
+-   In functions chapter19, you'll learn how to write functions which let you extract out repeated code so that it can be easily reused.
 
 -   chapter20, R's data structures, provided by vectors
 
--    Chapter21 Tools for iteration that let you do similar things again and again.
+-   Chapter21 Tools for iteration that let you do similar things again and again.
 
 ```{r import}
 
@@ -75,11 +73,9 @@ library(knitr)        #for tables
 
 -   Packages in the tidyverse load [`%>%`](https://magrittr.tidyverse.org/reference/pipe.html) for you automatically, so you don't usually load magrittr explicitly
 
-### 5.  Task explore alternative ways of using R using (calling) R 
+### 5. Task explore alternative ways of using R using (calling) R
 
 -   (Penguins dataset) Includes measurements for penguin species, island in Palmer Archipelago, size (flipper length, body mass, bill dimensions), and sex. This is a subset of penguins_raw.
-
--   Using the [`penguins`](https://github.com/allisonhorst/palmerpenguins) dataset, calculate the average body mass for Adelie penguins on different islands.
 
     ![](lter_penguins.png)
 
@@ -95,7 +91,9 @@ penguins_o <- penguins
 
 ```
 
-### 6 Conceptual framework  (solving the problem)
+### 6 Conceptual framework (solving the problem)
+
+Using the [`penguins`](https://github.com/allisonhorst/palmerpenguins) dataset, calculate the average body mass for Adelie penguins on different islands.
 
 -   Filter `penguins` to only keep observations where the species is "Adelie"
 
@@ -105,7 +103,7 @@ penguins_o <- penguins
 
 -   **But how do we implement this in code?**
 
-### 7  By saving intermediate steps
+### 7 By saving intermediate steps
 
 **Why is this problematic?**
 
@@ -116,7 +114,7 @@ penguins_3 <- summarize(penguins_2, body_mass = mean(body_mass_g, na.rm = TRUE))
 penguins_3
 ```
 
-### 8  By overwriting the original
+### 8 By overwriting the original dataset
 
 Similar to above
 
@@ -142,7 +140,7 @@ summarize(
 )
 
 #Same as 
-summarize(group_by(filter(penguins, species == "Adelie"), island), body_mass = mean(body_mass_g, na.rm = TRUE))
+summarize(group_by(filter(penguins_o, species == "Adelie"), island), body_mass = mean(body_mass_g, na.rm = TRUE))
 ```
 
 ### 10 Pipes approach
@@ -150,11 +148,12 @@ summarize(group_by(filter(penguins, species == "Adelie"), island), body_mass = m
 **focuses on verbs, not nouns**
 
 ```{r}
-penguins %>%
+penguins_o %>%
   filter(species == "Adelie") %>%
   group_by(island) %>%
   summarize(body_mass = mean(body_mass_g, na.rm = TRUE))
 
+adelie_penguins_mass
 ```
 
 ### 11. Additional resources

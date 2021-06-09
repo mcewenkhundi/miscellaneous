@@ -1,8 +1,10 @@
 ---
-title: "Untitled"
-author: "McEwen Khundi"
-date: "3 October 2018"
-output: html_document
+title: "Country Profile"
+output: 
+  html_document:
+    toc: TRUE
+params:
+  country_code: "MW"
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +19,9 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r cars}
 summary(cars)
+
+
+params$country_code
 ```
 
 ## Including Plots
