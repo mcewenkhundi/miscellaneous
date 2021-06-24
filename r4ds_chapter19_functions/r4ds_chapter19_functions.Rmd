@@ -110,7 +110,8 @@ rescale_meansd <- function (x) {
 ```
 
 ```{r}
-penguins <- penguins_o
+penguins <- palmerpenguins::penguins
+
 penguins$bill_length_mm <- rescale_meansd(penguins$bill_length_mm)
 penguins$bill_depth_mm <- rescale_meansd(penguins$bill_depth_mm)
 penguins$flipper_length_mm <- rescale_meansd(penguins$flipper_length_mm )
@@ -126,6 +127,8 @@ penguins
 -   What happens when we use the function on a character variable
 
 ```{r}
+penguins <- palmerpenguins::penguins
+
 rescale_meansd(penguins$species)
 
 ```
@@ -139,11 +142,14 @@ rescale_meansd <- function (x) {
   (x-mean(x,na.rm = TRUE))/sd(x, na.rm = TRUE)
 }
 
+
+
 ```
 
 ```{r}
 rescale_meansd(penguins$species)
 
+class(penguins$species)
 ```
 
 ### Lets check if it is still working
@@ -209,6 +215,7 @@ penguins_Dream <- penguins %>%
 penguins_Torgersen <- penguins %>%
                    filter(island=="Torgersen")
 
+#unique(penguins_Biscoe$island)
 
 ```
 
@@ -240,7 +247,7 @@ ggplot(data = penguins_Torgersen, mapping = aes(x= body_mass_g , y = flipper_len
 
 ```{r}
 scatter_mass_flipper_length <- function(data_df) {
-   ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = body_mass_g)) +
+   ggplot(data = data_df, mapping = aes(x= flipper_length_mm, y = body_mass_g)) +
   geom_point() +
   geom_smooth(method = "lm", se=FALSE) + 
   labs(x = "Body mass in grams", y = "Flipper length in mm")
@@ -272,7 +279,9 @@ scatter_mass_flipper_length <- function(data_df, title_txt) {
 Maybe allow an argument for titles ?
 ```{r}
 scatter_mass_flipper_length(penguins_Biscoe, title_txt = "Biscoe island: Penguin body mass (grams) vs flipper length")
+
 scatter_mass_flipper_length(penguins_Dream, title_txt = "Dream island: Penguin body mass (grams) vs flipper length")
+
 scatter_mass_flipper_length(penguins_Torgersen, title_txt = "Torgersen island:Penguin body mass (grams) vs flipper length")
 ```
 
@@ -307,8 +316,9 @@ scatter_mass_flipper_length(penguins)
 
 -   https://dplyr.tidyverse.org/articles/programming.html
 ```{r}
+
 scatter_mass_numdep <- function(data_df,numdep ,title_txt, y_txt) {
-   ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = {{numdep}})) +
+   ggplot(data = penguins_Torgersen, mapping = aes(x= body_mass_g, y = {{numdep}})) +
   geom_point() +
   geom_smooth(method = "lm", se=FALSE) + 
   labs(x = "Body mass in grams", y = y_txt, title = title_txt)
@@ -318,6 +328,7 @@ scatter_mass_numdep <- function(data_df,numdep ,title_txt, y_txt) {
 ```{r}
 scatter_mass_numdep(penguins, numdep = bill_length_mm, y_txt = "Bill length (mm)", title_txt = "Penguin body mass (g) vs Bill length (mm)" )
 ```
+
 ```{r}
 scatter_mass_numdep <- function(data_df,numdep , y_txt= "Bill length (mm)") {
    ggplot(data = penguins_Torgersen, mapping = aes(x= flipper_length_mm, y = {{numdep}})) +
@@ -329,6 +340,8 @@ scatter_mass_numdep <- function(data_df,numdep , y_txt= "Bill length (mm)") {
 
 ```{r}
 scatter_mass_numdep(penguins, numdep = bill_length_mm, y_txt = "Bill length (mm)")
+
+scatter_mass_numdep
 ```
 
 
