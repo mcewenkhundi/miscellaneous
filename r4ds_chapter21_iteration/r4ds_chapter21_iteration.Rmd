@@ -1,0 +1,261 @@
+---
+title: "R for data science book club"
+
+subtitle: "Iterations (repeating operations in R)"
+
+author: |
+  | McEwen Khundi
+  |
+  | London School of Tropical Medicine & Hygiene London, UK
+  | Malawi-Liverpool-Wellcome Clinical Research Programme, Blantyre, Malawi
+  |
+
+date: | 
+  | `r format(Sys.time(), "%B %d, %Y")`
+  |
+  | Table of Contents:
+output: 
+  html_document:
+    df_print: paged
+    theme: spacelab
+    toc: true
+---
+
+<br>
+
+## 1. Backgound
+
+<br>
+
+## 2. Set-up
+
+Load all required packages for analysis.
+
+```{r setup, message=FALSE}
+library(tidyverse)    #for data manipulation
+library(pmthemes)     #for ggplot themes
+library(knitr)        #for tables
+
+```
+
+<br>
+
+## 3. Import datasets
+
+Import data required for the analysis.
+
+We will use the penguins dataset from the palmerpenguis r package. Install package if not already installed.
+
+```{r import}
+penguins <- palmerpenguins::penguins
+
+
+```
+
+<br>
+
+## 4. Recap on last weeks chapter on R vector types
+
+**Atomic vectors in R**
+
+-   Character
+
+-   Integer
+
+-   Numerical/Double
+
+-   Logical
+
+-   Lists
+
+```{r tidy}
+letters
+typeof(letters)
+
+numbers1 <- c(1L,3L,4L) 
+numbers1
+typeof(numbers1)
+
+numbers2 <- c(1.2,3,4.5) 
+logicals
+typeof(numbers2)
+
+logicals <- c(T,F,T,F,T)
+typeof(logicals)
+
+lists <- list(letters, numbers1, numbers2, logicals)
+lists
+typeof(lists)
+```
+
+### 5. Tests for R objects
+
+Convenient in functions when you want to assert the type an R vector
+
+```{r}
+
+letters
+is.character(letters)
+
+numbers1 
+is.character(numbers1)
+
+numbers2 
+is.numeric(numbers2)
+
+logicals 
+is.logical(logicals)
+
+lists
+is.list(lists)
+```
+
+### 6. Types of vectors in the penguins data set  
+
+```{r}
+
+#Accessing a column in a dataframe
+#using position
+penguins[[1]]
+
+#using names
+penguins[["species"]]
+
+#Shortcut to above
+penguins$species
+
+typeof(penguins$species)
+```
+
+### 7. Connection between dataframes and lists
+
+Reference on classes and typeof <https://stackoverflow.com/questions/6258004/types-and-classes-of-variables>
+
+```{r}
+
+#Attributes or characteristics that are built ontop of the atomic vectors are called classes
+class(penguins)
+
+typeof(penguins)
+
+# Classses Can be asserted the same way as vector types using is.class functions
+
+```
+
+### 8. Using for loops to repeat operations in R
+
+-   **" functions reduce duplication by identifying repeated patterns of code and extract them out into independent pieces that can be easily reused and updated"**
+
+-   **"Another tool for reducing duplication is iteration, which helps you when you need to do the same thing to multiple inputs: repeating the same operation on different columns"**
+
+```{r}
+#create a new penguins dataset with numeric variables only
+penguins_numeric <- select(penguins, where(is.numeric))
+
+#get mean of each variable
+
+mean(penguins_numeric$bill_length_mm, na.rm = TRUE)
+
+mean(penguins_numeric$bill_depth_mm, na.rm = TRUE)
+
+mean(penguins_numeric$flipper_length_mm, na.rm = TRUE)
+
+mean(penguins_numeric$body_mass_g, na.rm = TRUE)
+
+mean(penguins_numeric$year, na.rm = TRUE)
+
+```
+
+### 9.  Using for loop to reduce repetitions in step 8
+
+```{r}
+
+output <- vector("double", length = 5) # vector to store values in
+
+for(i in seq_along(penguins_numeric)) { # the number of times to repeat operation
+  
+  output[[i]] <- mean(penguins_numeric[[i]], na.rm = T) # the body/operation
+  
+}
+
+output # all the values in output
+```
+
+### 10 Revisiting the scaling function example in the functions chapter 19
+
+The task was to rescale the numeric variables in the penguins
+
+```{r}
+penguins_numeric$bill_length_mm <- (penguins$bill_length_mm - mean(penguins$bill_length_mm, na.rm = TRUE))/sd(penguins$bill_length_mm, na.rm = TRUE)
+
+penguins_numeric$bill_depth_mm <- (penguins$bill_depth_mm - mean(penguins$bill_depth_mm, na.rm = TRUE))/sd(penguins$bill_depth_mm, na.rm = TRUE)
+
+penguins$flipper_length_mm <- (penguins$flipper_length_mm - mean(penguins$flipper_length_mm, na.rm = TRUE))/sd(penguins$flipper_length_mm, na.rm = TRUE)
+
+penguins_numeric$body_mass_g <- (penguins$body_mass_g - mean(penguins$body_mass_g, na.rm = TRUE))/sd(penguins$body_mass_g, na.rm = TRUE)
+
+```
+
+### 11 Extract common logic into a function
+
+```{r}
+rescale_meansd <- function (x) {
+  (x-mean(x,na.rm = TRUE))/sd(x, na.rm = TRUE)
+}
+
+penguins_numeric$bill_length_mm <- rescale_meansd(penguins_numeric$bill_length_mm)
+
+penguins_numeric$bill_depth_mm <- rescale_meansd(penguins_numeric$bill_depth_mm)
+
+penguins_numeric$flipper_length_mm <- rescale_meansd(penguins_numeric$flipper_length_mm )
+
+penguins_numeric$body_mass_g <- rescale_meansd(penguins_numeric$body_mass_g)
+
+penguins_numeric$year <- rescale_meansd(penguins_numeric$year)
+
+#View the rescaled data
+penguins_numeric
+
+```
+
+### 12 Use for loop to repeat operation
+
+```{r}
+#reset the data to original format
+penguins_numeric <- select(penguins, where(is.numeric))
+
+penguins_numeric
+
+for(i in seq_along(penguins_numeric)){
+  
+  penguins_numeric[[i]] <- rescale_meansd(penguins_numeric[[i]])
+  
+}
+
+penguins_numeric
+```
+
+13. Simplifying loops with functional programming
+
+    Next part of the chapter
+
+<br>
+
+## X. Reproducibility
+
+This reproduction of the analysis was run by:
+
+```{r sysinfo, echo=FALSE, message=FALSE, comment=NA, warning=FALSE}
+
+sysinfo <- Sys.info()
+
+sysinfo <- data.frame(keyName=names(sysinfo), value=sysinfo, row.names=NULL)
+
+sysinfo %>% kable()
+```
+
+Analysis was run at **`r Sys.time()`**, and using the following Session Info:
+
+```{r sessioninfo, echo=FALSE, results='markdown', message=FALSE, comment=NA, warning=FALSE}
+sessionInfo()
+```
