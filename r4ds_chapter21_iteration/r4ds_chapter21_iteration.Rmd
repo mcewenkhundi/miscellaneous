@@ -1,7 +1,7 @@
 ---
 title: "R for data science book club"
 
-subtitle: "Iterations (repeating operations in R)"
+subtitle: "Iterations (repeating operations in R) part 1"
 
 author: |
   | McEwen Khundi
@@ -110,7 +110,7 @@ lists
 is.list(lists)
 ```
 
-### 6. Types of vectors in the penguins data set  
+### 6. Types of vectors in the penguins data set
 
 ```{r}
 
@@ -121,7 +121,7 @@ penguins[[1]]
 #using names
 penguins[["species"]]
 
-#Shortcut to above
+#Shortcut to above [[]]
 penguins$species
 
 typeof(penguins$species)
@@ -166,7 +166,7 @@ mean(penguins_numeric$year, na.rm = TRUE)
 
 ```
 
-### 9.  Using for loop to reduce repetitions in step 8
+### 9. Using for loop to reduce repetitions in step 8
 
 ```{r}
 
@@ -235,9 +235,19 @@ for(i in seq_along(penguins_numeric)){
 penguins_numeric
 ```
 
-13. Simplifying loops with functional programming
+13. Next part of the chapter
 
-    Next part of the chapter
+    Replacing for loops with functionals chapter 21 part 2
+
+### 14 References
+
+-   [More on the data Penguins](%5Bhttps://twitter.com/allison_horst/status/1287772985630191617)](<https://twitter.com/allison_horst/status/1287772985630191617>))
+
+-   [Chapter 19 functions](%5Bhttps://r4ds.had.co.nz/functions.html)](<https://r4ds.had.co.nz/functions.html>)
+
+-   [Chapter 20](%5Bhttps://r4ds.had.co.nz/functions.html) vectors](<https://r4ds.had.co.nz/vectors.html>)
+
+-   [Chapter 21 iteration](%5Bhttps://r4ds.had.co.nz/functions.html)](<https://r4ds.had.co.nz/iteration.html#for-loops>)
 
 <br>
 
