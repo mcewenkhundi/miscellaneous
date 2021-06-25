@@ -79,7 +79,7 @@ penguins %>%
 summarise(bill_length_mm = mean(bill_length_mm, na.rm = TRUE),
             bill_depth_mm = mean(bill_depth_mm, na.rm = TRUE),
             flipper_length_mm = mean(flipper_length_mm, na.rm = TRUE),
-            body_mass_g = mean(body_mass_g,, na.rm = TRUE))
+            body_mass_g = mean(body_mass_g, na.rm = TRUE))
 
 
 ```
