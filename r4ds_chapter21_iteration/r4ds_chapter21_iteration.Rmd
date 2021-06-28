@@ -49,7 +49,7 @@ We will use the penguins dataset from the palmerpenguis r package. Install packa
 ```{r import}
 penguins <- palmerpenguins::penguins
 
-
+penguins
 ```
 
 <br>
@@ -77,10 +77,10 @@ numbers1
 typeof(numbers1)
 
 numbers2 <- c(1.2,3,4.5) 
-logicals
+numbers2
 typeof(numbers2)
 
-logicals <- c(T,F,T,F,T)
+logicals <- c(TRUE,F,T,F,T)
 typeof(logicals)
 
 lists <- list(letters, numbers1, numbers2, logicals)
@@ -98,7 +98,7 @@ letters
 is.character(letters)
 
 numbers1 
-is.character(numbers1)
+is.integer(numbers1)
 
 numbers2 
 is.numeric(numbers2)
@@ -116,6 +116,7 @@ is.list(lists)
 
 #Accessing a column in a dataframe
 #using position
+
 penguins[[1]]
 
 #using names
@@ -170,13 +171,14 @@ mean(penguins_numeric$year, na.rm = TRUE)
 
 ```{r}
 
-output <- vector("double", length = 5) # vector to store values in
+output <- vector("list", length = 5) # vector to store values in
 
 for(i in seq_along(penguins_numeric)) { # the number of times to repeat operation
   
   output[[i]] <- mean(penguins_numeric[[i]], na.rm = T) # the body/operation
   
 }
+
 
 output # all the values in output
 ```
@@ -186,13 +188,19 @@ output # all the values in output
 The task was to rescale the numeric variables in the penguins
 
 ```{r}
-penguins_numeric$bill_length_mm <- (penguins$bill_length_mm - mean(penguins$bill_length_mm, na.rm = TRUE))/sd(penguins$bill_length_mm, na.rm = TRUE)
+penguins_numeric$bill_length_mm <- (penguins_numeric$bill_length_mm - mean(penguins_numeric$bill_length_mm, na.rm = TRUE))/sd(penguins_numeric$bill_length_mm, na.rm = TRUE)
 
-penguins_numeric$bill_depth_mm <- (penguins$bill_depth_mm - mean(penguins$bill_depth_mm, na.rm = TRUE))/sd(penguins$bill_depth_mm, na.rm = TRUE)
+penguins_numeric$bill_depth_mm <- (penguins_numeric$bill_depth_mm - mean(penguins_numeric$bill_depth_mm, na.rm = TRUE))/sd(penguins_numeric$bill_depth_mm, na.rm = TRUE)
 
-penguins$flipper_length_mm <- (penguins$flipper_length_mm - mean(penguins$flipper_length_mm, na.rm = TRUE))/sd(penguins$flipper_length_mm, na.rm = TRUE)
+penguins_numeric$flipper_length_mm <- (penguins_numeric$flipper_length_mm - mean(penguins_numeric$flipper_length_mm, na.rm = TRUE))/sd(penguins_numeric$flipper_length_mm, na.rm = TRUE)
 
-penguins_numeric$body_mass_g <- (penguins$body_mass_g - mean(penguins$body_mass_g, na.rm = TRUE))/sd(penguins$body_mass_g, na.rm = TRUE)
+penguins_numeric$body_mass_g <- (penguins_numeric$body_mass_g - mean(penguins_numeric$body_mass_g, na.rm = TRUE))/sd(penguins_numeric$body_mass_g, na.rm = TRUE)
+
+penguins_numeric$year <- (penguins_numeric$year - mean(penguins_numeric$year, na.rm = TRUE))/sd(penguins_numeric$year, na.rm = TRUE)
+
+penguins_numeric
+
+penguins
 
 ```
 
@@ -202,6 +210,9 @@ penguins_numeric$body_mass_g <- (penguins$body_mass_g - mean(penguins$body_mass_
 rescale_meansd <- function (x) {
   (x-mean(x,na.rm = TRUE))/sd(x, na.rm = TRUE)
 }
+
+penguins_numeric <- select(palmerpenguins::penguins, where(is.numeric))
+penguins_numeric
 
 penguins_numeric$bill_length_mm <- rescale_meansd(penguins_numeric$bill_length_mm)
 
@@ -222,9 +233,12 @@ penguins_numeric
 
 ```{r}
 #reset the data to original format
-penguins_numeric <- select(penguins, where(is.numeric))
+penguins_numeric <- select(palmerpenguins::penguins, where(is.numeric))
 
 penguins_numeric
+
+seq_along(penguins_numeric)
+1:ncol(penguins_numeric)
 
 for(i in seq_along(penguins_numeric)){
   
@@ -233,6 +247,15 @@ for(i in seq_along(penguins_numeric)){
 }
 
 penguins_numeric
+
+penguins_numeric <- select(palmerpenguins::penguins, where(is.numeric))
+
+penguins_numeric %>%
+  summarise(across(everything(),mean, na.rm=T))
+
+
+
+
 ```
 
 13. Next part of the chapter
