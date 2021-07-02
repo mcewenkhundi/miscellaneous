@@ -33,7 +33,7 @@ Load all required packages for analysis.
 
 ```{r setup, message=FALSE}
 library(tidyverse)    #for data manipulation
-library(pmthemes)     #for ggplot themes
+#library(pmthemes)     #for ggplot themes
 library(knitr)        #for tables
 
 ```
@@ -255,12 +255,197 @@ penguins_numeric %>%
 
 
 
+```
+
+### 13. Part 2
+
+    Replacing for loops with functionals chapter 21 part 2
+
+### Question from last meeting from Micheal
+
+Is it possible to create new variables and maintain the old variables in the data set
+
+```{r}
+examble_df <- tribble(
+  ~colA, ~colB,
+  5,   1,
+  8,   2,
+  9,   3
+)
+
+examble_df
+
+#Multiply each variable by 10 and maintain the old variables
+
+for(i in seq_along(examble_df)){
+  names_var <- names(examble_df)[i]
+  
+  names_var <- paste0(names_var, "times10")
+  
+  examble_df[[names_var]] <- examble_df[[i]]*10
+  
+}
+
+examble_df
 
 ```
 
-13. Next part of the chapter
+### 14. A brief overview of functional
 
-    Replacing for loops with functionals chapter 21 part 2
+In summary functionals are functions that accept other functions as arguments. We use this logic to wrap up for loops into functions which can be used instead of the for loops.
+
+What problem do functionals try to solve?
+
+```{r}
+penguins_numeric <- select(palmerpenguins::penguins, where(is.numeric))
+
+##Table mean, meadian, and sd of the numeric variables of the dataset
+
+out_vec_mean <- vector("list", length = ncol(penguins_numeric))
+
+for ( i in seq_along(penguins_numeric)) {
+  
+  out_vec_mean[[i]] <- mean(penguins_numeric[[i]], na.rm = TRUE)
+}
+
+out_vec_mean
+
+out_vec_median <- vector("list", length = ncol(penguins_numeric))
+
+for ( i in seq_along(penguins_numeric)) {
+  
+  out_vec_median[[i]] <- median(penguins_numeric[[i]], na.rm = TRUE)
+}
+
+out_vec_median
+
+
+out_vec_sd <- vector("list", length = ncol(penguins_numeric))
+
+for ( i in seq_along(penguins_numeric)) {
+  
+  out_vec_sd[[i]] <- sd(penguins_numeric[[i]], na.rm = TRUE)
+}
+
+out_vec_sd
+```
+
+### 15 How can we reduce the duplication of logic in the code above
+
+Use functionals. We will use functional functions from the purrr package which is part of the tidyverse eco-system of packages. But base R has functionals as well i.e. lapply() and apply()
+
+Example code of functionals
+
+```{r}
+simple_map <- function(df, f) {  
+  out_vec <- vector("list", length = ncol(df))
+  
+  for (i in seq_along(df)){
+    
+    out_vec[[i]] <- f(df[[i]], na.rm = TRUE)
+    
+  }
+  
+ out_vec 
+}
+
+```
+
+16 \#\#\# Repeating the mean, median, standard deviation excercise with the simple map
+
+Code reads better, you can understand what's going on
+
+```{r}
+simple_map(penguins_numeric, f = mean)
+
+
+simple_map(penguins_numeric, f = median)
+
+
+simple_map(penguins_numeric, f = sd)
+```
+
+17 \#\#\# Repeating the mean, median, standard deviation excercise with the simple map
+
+Using functions from purrr. Made to accept other arguments of functions and edge cases that simple_map above would fail to handle
+
+```{r}
+library(purrr)
+
+map(penguins_numeric, mean, na.rm = TRUE)
+
+
+map(penguins_numeric, median, na.rm = TRUE)
+
+
+map(penguins_numeric,sd, na.rm = TRUE)
+
+
+```
+
+### 17 Example involving multiple steps
+
+### map Conceptual diagram
+
+mean(penguins_numeric[[1]]), mean(penguins_numeric[[2]])....mean(penguins_numeric[[last column]]
+
+![](Capture.PNG)
+
+```{r}
+penguins <- palmerpenguins::penguins
+
+#Investigate the linear relationship between flipper_length vs body mass for each type of species and on each island 
+
+lm_model <-  function(df){
+  
+lm(flipper_length_mm ~ body_mass_g, data = df)
+  
+}
+
+
+models_species <- penguins %>% 
+  split(.$species) %>% 
+  map(lm_model)  %>%
+  map(summary) %>%
+  map(coef)
+
+models_island <- penguins %>% 
+  split(.$island) %>% 
+  map(function(df) lm(flipper_length_mm ~ body_mass_g, data = df)) %>%
+  map(summary) 
+
+```
+
+### 19 Another example of using maps
+
+```{r}
+library(ggplot2)
+
+
+## function was defined in chapter 19 review
+scatter_mass_numdep <- function(data_df,numdep , y_txt= "Bill length (mm)") {
+   ggplot(data = data_df, mapping = aes(x= body_mass_g, y = {{numdep}})) +
+  geom_point() +
+  geom_smooth(method = "lm", se=FALSE) + 
+  labs(x = "Body mass in grams", y = y_txt, title = glue::glue("Penguin body mass (g) vs {y_txt}"))
+ }
+
+#Plot the relationship between penguin bill_length_mm vs body mass for each species 
+models_species_dfs <- penguins %>% 
+                      split(.$species)
+
+map(models_species_dfs, scatter_mass_numdep, numdep = bill_length_mm)
+
+#Plot the relationship between penguin bill_length_mm vs body mass for each island
+models_island_dfs <- penguins %>% 
+                      split(.$island)
+
+models_island_dfs
+
+map(models_island_dfs, scatter_mass_numdep, numdep = bill_length_mm)
+
+
+```
 
 ### 14 References
 
@@ -271,6 +456,8 @@ penguins_numeric %>%
 -   [Chapter 20](%5Bhttps://r4ds.had.co.nz/functions.html) vectors](<https://r4ds.had.co.nz/vectors.html>)
 
 -   [Chapter 21 iteration](%5Bhttps://r4ds.had.co.nz/functions.html)](<https://r4ds.had.co.nz/iteration.html#for-loops>)
+
+-   [Chapter 9 Functionals](https://adv-r.hadley.nz/functionals.html)
 
 <br>
 
