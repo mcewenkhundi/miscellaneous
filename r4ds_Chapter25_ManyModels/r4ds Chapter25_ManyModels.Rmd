@@ -76,7 +76,7 @@ This to note from the graph
 
 1.  Overall trend inn life expectancy is improving
 
-2.   Some countries are not doing so well
+2.  Some countries are not doing so well
 
 ```{r tidy}
 gapminder %>% 
@@ -146,7 +146,7 @@ country_model <- function(df) {
 ## We have two options of using the function above
 models <- map(by_country$data, country_model)
 
-models
+models[[1]]
 
 by_country <- by_country %>% 
   mutate(model = map(data, country_model))
@@ -198,6 +198,8 @@ broom::glance(mw_mod)
  glance <- by_country %>% 
   mutate(glance = map(model, broom::glance)) %>% 
   unnest(glance)
+ 
+ glance
 
 ```
 
@@ -220,6 +222,73 @@ gapminder %>%
   semi_join(bad_fit, by = "country") %>% 
   ggplot(aes(year, lifeExp, colour = country)) +
     geom_line()
+
+```
+
+### 11 Another example demonstrating the use of list columns
+
+**We will use the penguins dataset**
+
+```{r}
+library(palmerpenguins)
+
+penguins_sub <- select(penguins, species, body_mass_g, bill_length_mm, sex)
+
+penguins_sub
+```
+
+```{r}
+
+##How can we have this graph for each species of penguin
+ggplot(data = penguins_sub, aes(x = body_mass_g, y = bill_length_mm, color = sex )) + 
+  geom_point() 
+
+#Create the nested grouped data
+penguins_species <- penguins_sub %>%
+                    group_nest(species)
+
+#Check the data
+penguins_species
+
+#Check data value for the Adelie penguin
+
+penguins_species$data[[1]]
+
+```
+
+```{r}
+#Function to use in map
+plot_species <- function(df, title_var){
+ggplot(data = df, aes(x = body_mass_g, y = bill_length_mm, color = sex )) + 
+  geom_point() +
+  labs(title = title_var)
+}
+
+
+#Create graphs for each species
+penguins_species <- penguins_species %>%
+                    mutate(plots = map2(data, species,plot_species))
+
+penguins_species
+
+```
+
+```{r}
+#Can check the graphs and write them to a figures folder
+
+penguins_species$plots[[1]]
+
+#create file paths to save to 
+penguins_species <- penguins_species %>%
+                    mutate(file_names = paste0(here::here("figures"),"/",species,".png"))
+
+penguins_species$file_names[1]
+#Finally save all the plots to the folder
+
+
+
+penguins_species %>%
+  mutate(save_files = map2(file_names, plots, ggsave))
 
 ```
 

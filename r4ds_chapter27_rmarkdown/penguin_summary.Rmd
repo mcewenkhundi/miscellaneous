@@ -1,0 +1,28 @@
+---
+output: html_document
+params:
+  my_species: "Adelie"
+---
+
+```{r setup, include = FALSE}
+library(ggplot2)
+library(dplyr)
+library(palmerpenguins)
+
+penguins_species <- penguins %>% filter(species == params$my_species)
+```
+
+# Summary data for `r params$my_species`s
+
+Graph of bill_length vs body_mass
+```{r, message = FALSE}
+ggplot(penguins_species, aes(bill_length_mm,  body_mass_g)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE) 
+```
+
+# Table header
+```{r}
+gt::gt(head(penguins_species))
+```
+
