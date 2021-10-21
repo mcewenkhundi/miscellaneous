@@ -75,7 +75,7 @@ str_squish("  Pt requires   IV saline\n")
 df %>%
   mutate(outcome3 = str_sub(outcome, 1, 3))
 
-#how can cause unexpected results
+#how untrimmed can cause unexpected results
 #use the df with untrimmed char vars
 df %>%
   mutate(outcome3 = str_sub(outcome, 1, 3))
@@ -83,7 +83,6 @@ df %>%
 #number of characters in a word
 df %>%
   mutate(name_len = str_length(name))
-
 
 #separating a character var
 df_split <- separate(df, symptoms, into = c("sym_1", "sym_2", "sym_3"), extra = "merge")
@@ -102,7 +101,7 @@ df_split %>%
 df %>%
   mutate(hh_bed = str_extract(house_items, pattern = "bed"), .after = house_items)
 
-##how to extact numbers from a character variable
+##how to extract numbers from a character variable
 ## this is under regular expressions but we are going to cheat by using functions
 #from the readr package
 

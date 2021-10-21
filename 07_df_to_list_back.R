@@ -6,6 +6,9 @@ df = data.frame(x=c('a','b','c'), y=3:1)
 # 'convert' into a list of data.frames
 ldf = lapply(as.list(1:nrow(df)), function(x) df[x,])
 
+map(1:nrow(df), function(x) df[x,])
+
+#do the below with a map function
 df %>% group_split(x) 
 
 df_remade <- do.call("rbind", ldf)
