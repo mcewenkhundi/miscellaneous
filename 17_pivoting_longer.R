@@ -17,6 +17,7 @@ billboard %>%
     values_drop_na = TRUE
   )
 
+
 # Multiple variables stored in colum names
 who %>% pivot_longer(
   cols = new_sp_m014:newrel_f65,
