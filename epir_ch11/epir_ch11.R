@@ -39,7 +39,9 @@ ggplot(data = linelist)+
 
 #create a factor and also specify factor category order
 linelist <- linelist %>%
-  mutate(delay_cat = fct_relevel(delay_cat, "<2 days", "2-5 days", ">5 days"))
+  mutate(delay_cat = fct_relevel(delay_cat, 
+                                 "<2 days", "2-5 days",
+                                 ">5 days"))
 
 levels(linelist$delay_cat)
 
@@ -96,11 +98,22 @@ ggplot(data = linelist)+
 
 #Order by the end value of the lines
 epidemic_data <- linelist %>%         # begin with the linelist   
-  filter(date_onset < as.Date("2014-09-21")) %>%    # cut-off date, for visual clarity
+  filter(date_onset < ymd("2014-09-21")) %>%    # cut-off date, for visual clarity
   count(                                            # get case counts per week and by hospital
     epiweek = lubridate::floor_date(date_onset, "week"),  
     hospital                                            
   ) 
+
+ggplot(data = epidemic_data)+                       # start plot
+  geom_line(                                        # make lines
+    aes(
+      x = epiweek,                                  # x-axis epiweek
+      y = n,                                        # height is number of cases per week
+      color = hospital)) + # data grouped and colored by hospital, with factor order by height at end of plot
+  labs(title = "Factor levels (and legend display) by line height at end of plot",
+       color = "Hospital")                          # change legend title
+
+
 
 ggplot(data = epidemic_data)+                       # start plot
   geom_line(                                        # make lines
