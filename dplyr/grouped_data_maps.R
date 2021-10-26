@@ -48,10 +48,10 @@ iris %>%
 
 
 # group_walk() is for side effects
-dir.create(temp <- tempfile())
+paths <- here::here()
 iris %>%
   group_by(Species) %>%
-  group_walk(~ write.csv(.x, file = file.path(temp, paste0(.y$Species, ".csv"))))
+  group_walk(~ write.csv(.x, file = file.path(paths, paste0(.y$Species, ".csv"))))
 list.files(temp, pattern = "csv$")
 #> [1] "setosa.csv"     "versicolor.csv" "virginica.csv" 
 unlink(temp, recursive = TRUE)

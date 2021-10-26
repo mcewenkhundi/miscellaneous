@@ -10,7 +10,7 @@ df %>% rowwise()
 # how the other verbs work. For example, compare the results of mutate() in 
 # the following code:
 #   
-  df %>% mutate(m = mean(c(x, y, z)))
+df %>% mutate(m = mean(c(x, y, z)))
 
 df %>% rowwise() %>% mutate(m = mean(c(x, y, z)))
 
@@ -108,7 +108,6 @@ df %>% mutate(l = length(x))
   
 df %>% mutate(l = lengths(x))
 
-
 #Or if you’re an experienced R programmer, you might know how to apply a 
 # function to each element of a list using sapply(), vapply(), or one of 
 # the purrr map() functions:
@@ -196,19 +195,22 @@ rf %>% mutate(type = typeof(y), length = length(y))
 
 #And supplement that with one set of predictions per row:
 
- mods <- mods %>% mutate(pred = list(predict(mod, data)))
- mods
+mods <- mods %>% mutate(pred = list(predict(mod, data)))
 
- #You could then summarise the model in a variety of ways:
+mods %>%
+   unnest(pred)
+
+#You could then summarise the model in a variety of ways:
      
-     mods %>% summarise(rmse = sqrt(mean((pred - data$mpg) ^ 2)))
+mods %>% summarise(rmse = sqrt(mean((pred - data$mpg) ^ 2)))
   
-      mods %>% summarise(rsq = summary(mod)$r.squared)
+mods %>% summarise(rsq = summary(mod)$r.squared)
    
-      mods %>% summarise(broom::glance(mod))
+mods %>% summarise(broom::glance(mod))
+
 #or easily access the parameters of each model:
      
-     mods %>% summarise(broom::tidy(mod))
+mods %>% summarise(broom::tidy(mod))
  
 # Repeated function calls
 # rowwise() doesn’t just work with functions that return a length-1 vector 
@@ -231,9 +233,9 @@ rf %>% mutate(type = typeof(y), length = length(y))
        )
 # You can supply these parameters to runif() by using rowwise() and mutate():
        
-       df %>% 
-       rowwise() %>% 
-       mutate(data = list(runif(n, min, max)))
+ df %>% 
+ rowwise() %>% 
+ mutate(data = list(runif(n, min, max)))
  
 #Note the use of list() here - runif() returns multiple values and a mutate()
 #expression has to return something of length 1. list() means that we’ll get a 
@@ -271,7 +273,7 @@ df <- tribble(
      
  df %>% 
        mutate(data = list(do.call(rng, params)))
-    
+ 
 #  Previously
 #  rowwise()
 #  rowwise() was also questioning for quite some time, partly because I didn’t 
