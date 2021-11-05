@@ -46,7 +46,7 @@ starwars %>% summarise(across(c(height, mass, birth_year), min_max, .names = "{.
 #If you’d prefer all summaries with the same function to be grouped together, 
 #you’ll have to expand the calls yourself:
   
-  starwars %>% summarise(
+starwars %>% summarise(
     across(c(height, mass, birth_year), ~min(.x, na.rm = TRUE), .names = "min_{.col}"),
     across(c(height, mass, birth_year), ~max(.x, na.rm = TRUE), .names = "max_{.col}")
     )

@@ -14,4 +14,3 @@ df_tb <- df_tb %>%
   mutate(bino_exact = list(binom.test(colA,colB)),
          bino_exact_rs = broom::tidy(bino_exact))
 
-df_tb$bino_exact[[1]]
