@@ -73,10 +73,19 @@ linelist %>%
 
 #Also check function count()
 #does groupby and counts
+
+linelist %>%
+  group_by(outcome) %>%
+  tally()
+
+
 linelist %>%
   count(outcome)
 
 ##Version for mutate, to keep variable in dataset
+linelist %>% 
+  count(hospital)
+
 linelist %>% 
   as_tibble() %>%                   # convert to tibble for nicer printing 
   add_count(hospital) %>%           # add column n with counts by hospital
@@ -115,8 +124,7 @@ linelist %>%
 #Notice the missing values
 linelist %>%
   group_by(outcome) %>%
-  summarise(across(where(is.numeric), list(mean=mean, sd=sd,min=min,max=max))) %>%
-  View()
+  summarise(across(where(is.numeric), list(mean=mean, sd=sd,min=min,max=max))) 
 
 linelist %>%
   group_by(outcome) %>%
@@ -171,12 +179,34 @@ df_tb <- tribble(
   3,   36
 )
 
+bin_prop = binom.test(2,15)
+broom::tidy(bin_prop)
+
+
+binom_object = vector(mode = "list", 3)
+binom_tidy = vector(mode = "list", 3)
+
+for(i in 1:3){
+  
+  binom_object[[i]] = binom.test(df_tb$colA[i],df_tb$colB[i])
+  
+  binom_tidy[[i]] = broom::tidy(binom_object[[i]])
+
+}
+
+bind_rows(binom_tidy)
+
+bind_cols(df_tb, bind_rows(binom_tidy))
+
+#We can do the above steps more concisely 
+
 df_tb <- df_tb %>%
   rowwise() %>%
   mutate(bino_exact = list(binom.test(colA,colB)),
          bino_exact_rs = list(broom::tidy(bino_exact)))
 
-df_tb 
+df_tb %>%
+  unnest(bino_exact_rs)
 
 #References
 #Check the articles on 

@@ -1,0 +1,225 @@
+---
+title: "R book club"
+subtitle: "Last meeting of 2021"
+date: "2021-12-03"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: true
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+  fig.width=9, fig.height=4, fig.retina=2, 
+  out.width="100%",
+  message = FALSE
+)
+
+# https://presentable-user2021.netlify.app/materials/act-02/03-xaringan-extras/#activity
+library(flipbookr)
+xaringanExtra::use_editable()
+xaringanExtra::use_share_again()
+```
+.can-edit[
+.pull-left[
+### Reviewing this years progress `r emo::ji("contest")`
+
+* We have covered chapter 1 to chapter to chapter 13 of Epi R Handbook
+* Been meeting consistently (usualy more than 6 member) `r emo::ji("clap")`
+* Interactive session
+* New presenter **Mphatso** `r emo::ji("check")`
+* New R users becoming comfortable with R
+* Going through the book as a group
+* Unplanned insights when going through the session
+* opportunity for practising R coding and cementing R knowledge
+* What else ?
+]
+
+.pull-right[
+### Feedback (Areas to improve) `r emo::ji("document")`
+
+* How would you like the sessions to be improved ?
+* At times I wasn't sure on how much I should balance between beginner material and advanced 
+* Should we follow the book step by step ?
+* Turn around time for the videos on drop-box
+
+]
+]
+---
+
+### Next years agenda for the group `r emo::ji("key")`
+
+* Continue with the book club?
+  * Might take us up to June
+  * Use 
+* How do we deal with new club members who join us before finishing the book ?
+* 
+
+---
+### Special tutorials focused  on particular skills `r emo::ji("key")`
+* Defining custom functions in R `r emo::ji("spanner")`
+* Data visualisation with ggplot2 `r emo::ji("metrics")`
+* Functional programming (Understanding the purrr package)
+* Introduction to gis data management in R
+* Time series data analysis in R
+
+### Other suggestions 
+* Challenges session, troubleshooting session
+* How to ask questions in slack
+* How can we make the book club more interactive
+* New users
+  * Can refer them to the old videos 
+* We can accommodate new members in the group
+
+
+
+---
+.panelset[
+
+.panel[.panel-name[Code]
+
+```{r lemur-weight, panelset=TRUE, fig.show='hide'}
+library(tidyverse)
+lemurs <- readRDS("lemurs.rds")
+
+lemurs %>%
+  filter(
+    common_name == "Ring-Tailed Lemur",
+    between(age_at_wt_y, 1, 5)
+  ) %>%
+  ggplot() +
+  aes(x = age_at_wt_y, y = weight) +
+  geom_point() +
+  labs(
+    x = "Age at Weight",
+    y = "Weight (g)",
+    title = "Weight Gain of Young Ring-Tailed Lemurs"
+  )
+```
+]
+
+.panel[.panel-name[Regression]
+
+```{r echo=FALSE}
+last_plot() + geom_smooth(method = "lm")
+```
+]
+
+]
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_xaringan_extra(c("panelset"))
+```
+
+---
+# First up: classic flipbook, using defaults to walk through code pipeline
+
+
+
+
+
+<!-- get a flipbook version of the my_cars code chunk - pauses are where parentheses are balanced -->
+---
+
+`r chunk_reveal("my_cars")`
+
+```{r my_cars, include = FALSE}
+cars %>%
+  filter(speed > 4) %>%
+  ggplot() +
+  aes(x = speed) + #BREAK
+  aes(y = dist) + #BREAK
+  geom_point(
+    alpha = .8, 
+    color = "blue" 
+    ) + 
+  aes(size = speed) #BREAK
+```
+
+---
+class: inverse, center, middle
+
+
+# Next up:  refer to same chunk, but use user defined breakpoints, and display output only
+
+
+
+
+
+
+<!-- get another flipbook version of the my_cars code chunk, this time at the defined breaks and only showing output -->
+---
+
+`r chunk_reveal("my_cars", break_type = "user", display_type = "output", title = "### user defined break! using #BREAK message")`
+
+
+
+---
+class: inverse, center, middle
+
+# Next up:  cycle through different lines of code
+
+
+
+
+
+<!-- get flipbook that rotates through lines, my_fill -->
+---
+
+`r chunk_reveal("my_fill", break_type = "rotate", widths = c(1,1), title = "### cycle through lines of code marked #ROTATE")`
+
+```{r my_fill, eval = F, echo = F}
+ggplot(data = cars) +
+  aes(x = speed) +
+  aes(y = dist) +
+  geom_point(size = 8,
+             shape = 21,
+             alpha = .9,
+             color = "snow") +
+  aes(fill = speed) +
+  scale_fill_viridis_c(option = "magma") + #ROTATE
+  scale_fill_viridis_c(option = "cividis") + #ROTATE
+  scale_fill_viridis_c(option = "plasma") #ROTATE
+```
+
+
+---
+class: inverse, center, middle
+
+# Next up:  look at multiple realizations of same code
+
+
+
+
+
+<!-- get flipbook that shows multiple realizations of the same code -->
+---
+
+`r chunk_reveal("cars_multi", break_type = 5, title = "### see multiple realizations of code")`
+
+```{r cars_multi, include = FALSE}
+cars %>% 
+  sample_frac(size = 1, replace = TRUE) %>%      
+  ggplot() +              
+  aes(x = speed) +
+  aes(y = dist) +
+  geom_count(
+    alpha = .7,
+    color = "blue",
+    size = 4
+    ) + 
+  geom_smooth(method = lm, se = FALSE) +
+  coord_cartesian(xlim = range(cars$speed),
+                  ylim = range(cars$dist)) +
+  theme(legend.position = c(.9, .2))
+```
+
+
+
+
+
