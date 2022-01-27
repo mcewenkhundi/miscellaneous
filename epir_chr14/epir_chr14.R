@@ -27,6 +27,8 @@ y <- tribble(
   4, "y3"
 )
 
+x %>%
+  select(val_x)
 #Inner join
 #Includes observations that are in both tables
 #unmatched rows not included
@@ -59,7 +61,8 @@ m <- tribble(
 n <- tribble(
   ~key, ~val_y,
   1, "y1",
-  2, "y2"
+  2, "y2",
+  2, "y3"
 )
 
 left_join(m, n, by = "key")
@@ -88,6 +91,25 @@ y_z <- tribble(
 )
 
 inner_join(x_z, y_z)
+
+#What happens when you have same var names in the two datasets
+x <- tribble(
+  ~key, ~name,
+  1, "x1",
+  2, "x2",
+  3, "x3",
+  NA, "x7",
+  NA, "x8"
+)
+y <- tribble(
+  ~key, ~name,
+  1, "y1",
+  2, "y2",
+  4, "y3",
+  NA, "y4"
+)
+
+inner_join(x, y, by = "key")
 
 #When the names are different you need to specify
 #x %>%
