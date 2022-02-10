@@ -1,0 +1,239 @@
+---
+title: "Chapter 16 iteration"
+
+subtitle: "Using purrr::map"
+
+author: |
+  | McEwen Khundi
+  |
+  |
+
+date: | 
+  | `r format(Sys.time(), "%B %d, %Y")`
+  |
+  | Table of Contents:
+output: 
+  html_document:
+    df_print: paged
+    theme: spacelab
+    toc: true
+---
+
+<br>
+
+## 1. Backgound
+
+<br>
+
+## 2. Set-up
+
+Load all required packages for analysis.
+
+```{r setup, message=FALSE}
+library(tidyverse)    #for data manipulation
+library(pmthemes)     #for ggplot themes
+library(knitr)        #for tables
+
+```
+
+<br>
+
+## 3. Import datasets
+
+Import data required for the analysis.
+
+```{r import}
+
+linelist <- read_rds(here::here("linelist_cleaned.rds"))
+
+```
+
+<br>
+
+## 4. Some brief introduction on defining functions in R
+
+-   Why do we define functions
+
+    -   To reduce repetition
+
+    -   Ease reuse of code
+
+    -   Abstract out the details
+
+-   For this exercise assume R does not have an inbuilt mean function.
+
+    -   Find the mean age, generation, weight, ht_cm
+
+```{r mean}
+
+#mean age
+linelist %>%
+  pull(age_years) %>% ## get the sum 
+  sum(na.rm = TRUE)/ ## devide
+linelist %>%
+  filter(!is.na(age_years)) %>% ## get the total non missing values
+    nrow()
+
+#mean generation
+linelist %>%
+  pull(generation) %>% ## get the sum 
+  sum(na.rm = TRUE)/ ## devide
+linelist %>%
+  filter(!is.na(generation)) %>% ## get the total non missing values
+    nrow()
+
+#mean weight kg
+linelist %>%
+  pull(wt_kg) %>% ## get the sum 
+  sum(na.rm = TRUE)/ ## devide
+linelist %>%
+  filter(!is.na(wt_kg)) %>% ## get the total non missing values
+    nrow()
+
+
+#mean height cm
+linelist %>%
+  pull(ht_cm) %>% ## get the sum 
+  sum(na.rm = TRUE)/ ## devide
+linelist %>%
+  filter(!is.na(ht_cm)) %>% ## get the total non missing values
+    nrow()
+
+```
+
+## 5. Define a function for mean (to reduce repetition)
+
+-   And use function
+
+```{r}
+
+#tidyverse version
+mean_fn_tidy <- function(num_var){
+  linelist %>%
+  pull({{num_var}}) %>% ## get the sum 
+  sum(na.rm = TRUE)/ ## devide
+linelist %>%
+  filter(!is.na({{num_var}})) %>% ## get the total non missing values
+    nrow()
+}
+
+#a baseR version
+mean_fn_base <- function(num_var){
+  sum(linelist[[num_var]], na.rm = TRUE)/
+  sum(!is.na(linelist[[num_var]]))
+}
+
+mean_fn_base("age_years")
+
+mean_fn_tidy("age_years")
+
+mean_fn_tidy(generation)
+
+mean_fn_tidy(wt_kg)
+
+mean_fn_tidy(ht_cm)
+
+```
+
+## 5. How can we reduce repetition (iteration)
+
+```{r iteration}
+
+
+for(i in c("age_years", "generation")){
+  
+  mean_fn_tidy(i)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+## 5. Disadvantages of a for loop
+
+-   Set up the sequence
+
+-   Set up the container
+
+Introduce purrr::map
+
+```{r maps}
+
+
+
+
+
+
+```
+
+## 5. Passing arguments to functions in map
+
+-   Use the R based mean
+
+```{r}
+
+
+
+
+
+
+
+```
+
+## 6. Anonymous functions in Maps
+
+-   Introduce the ., .x and \~ notation
+
+```{r}
+
+
+
+
+
+
+
+
+
+
+```
+
+## 6. References
+
+-   <https://epirhandbook.com/en/iteration-loops-and-lists.html>
+
+-   <https://r4ds.had.co.nz/iteration.html>
+
+-   <https://www.youtube.com/watch?v=GxvccD8K49M>
+
+<br>
+
+## 7. Reproducibility
+
+This reproduction of the analysis was run by:
+
+```{r sysinfo, echo=FALSE, message=FALSE, comment=NA, warning=FALSE}
+
+sysinfo <- Sys.info()
+
+sysinfo <- data.frame(keyName=names(sysinfo), value=sysinfo, row.names=NULL)
+
+sysinfo %>% kable()
+```
+
+Analysis was run at **`r Sys.time()`**, and using the following Session Info:
+
+```{r sessioninfo, echo=FALSE, results='markdown', message=FALSE, comment=NA, warning=FALSE}
+sessionInfo()
+```
