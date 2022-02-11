@@ -99,6 +99,10 @@ linelist %>%
   filter(!is.na(ht_cm)) %>% ## get the total non missing values
     nrow()
 
+#using base R version
+ sum(linelist[["ht_cm"]], na.rm = TRUE)/
+  sum(!is.na(linelist[["ht_cm"]]))
+
 ```
 
 ## 5. Define a function for mean (to reduce repetition)
@@ -109,18 +113,14 @@ linelist %>%
 
 #tidyverse version
 mean_fn_tidy <- function(num_var){
-  linelist %>%
-  pull({{num_var}}) %>% ## get the sum 
-  sum(na.rm = TRUE)/ ## devide
-linelist %>%
-  filter(!is.na({{num_var}})) %>% ## get the total non missing values
-    nrow()
+
+  
+  
 }
 
 #a baseR version
 mean_fn_base <- function(num_var){
-  sum(linelist[[num_var]], na.rm = TRUE)/
-  sum(!is.na(linelist[[num_var]]))
+ 
 }
 
 mean_fn_base("age_years")
@@ -143,10 +143,8 @@ mean_fn_tidy(ht_cm)
 var_ofinterest <- c("age_years", "generation")
 num_vec <- vector(mode="numeric", length = 2)
 
-for(i in 1:length(var_ofinterest )){ #can easely add other variables here
-  
-    num_vec[i] <- mean_fn_tidy(var_ofinterest[i])
-    ## print output
+for( )){ #can easely add other variables here
+
 }
 
 
@@ -173,10 +171,12 @@ for(i in 1:length(var_ofinterest )){ #can easely add other variables here
 
 Introduce purrr::map
 
+![](basic%20map.png)
+
 ```{r maps}
 
 
-map(c("age_years", "generation"), mean_fn_tidy)
+map(##, ##)
 
 
 
@@ -188,11 +188,13 @@ map(c("age_years", "generation"), mean_fn_tidy)
 
 -   It is generalised and can work with any other dataset
 
+    ![](map-arg.png)
+
 ```{r}
 
 
 
-map(select(linelist,"age_years", "generation"), mean, na.rm = TRUE)
+
 
 
 
@@ -209,15 +211,14 @@ map(select(linelist,"age_years", "generation"),
     
   function(x){
     
-  sum(x, na.rm = TRUE)/
-  sum(!is.na(x))
+ #use the base r version
     
   })
 
 
 map(select(linelist,"age_years", "generation"),
     
-  ~sum(.x, na.rm = TRUE)/sum(!is.na(.x))
+  ~#uset the base R version
     
   )
 
@@ -242,18 +243,46 @@ for(hosp in hospital_names){
 
 ggpubr::ggarrange(plotlist = graph_container, ncol = 2, nrow = 3)
 
-#Using purrr
-with_graphs = linelist %>%
-  group_nest(hospital) %>%
-  mutate(graph = map(data, ~ggplot(data = .x) +
-      geom_histogram(aes(x = date_onset)) +
-      labs(title = hosp, x = "data of onset")))
+#Using purrr, with the anonymous notation
+#with_graphs 
 
-with_graphs$graph
+
+ggpubr::ggarrange(plotlist = with_graphs$graph, ncol = 2, nrow = 3)
 ```
 
+## 8. Iteration shortcuts in tidyverse
 
-## 8. References
+-   Renaming multiple variables
+
+    -   replace \_ with . in all variables with \_
+
+-   manipulating several variables in mutate or summarise
+
+-   filtering on more than one variable
+
+    -   filter to select all rows with atleast one value greater than 2
+
+```{r}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+## 9. References
 
 -   <https://epirhandbook.com/en/iteration-loops-and-lists.html>
 
@@ -263,7 +292,7 @@ with_graphs$graph
 
 <br>
 
-## 7. Reproducibility
+## 10. Reproducibility
 
 This reproduction of the analysis was run by:
 
