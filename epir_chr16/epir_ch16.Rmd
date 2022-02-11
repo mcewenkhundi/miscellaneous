@@ -139,14 +139,14 @@ mean_fn_tidy(ht_cm)
 
 ```{r iteration}
 
+
+var_ofinterest <- c("age_years", "generation")
 num_vec <- vector(mode="numeric", length = 2)
 
-step = 1
-for(i in c("age_years", "generation")){
+for(i in 1:length(var_ofinterest )){ #can easely add other variables here
   
-    num_vec[step] <- mean_fn_tidy(i)
-    
-    step = step + 1
+    num_vec[i] <- mean_fn_tidy(var_ofinterest[i])
+    ## print output
 }
 
 
@@ -186,7 +186,7 @@ map(c("age_years", "generation"), mean_fn_tidy)
 
 -   Use the R based mean
 
--   It is generalised can work with any other dataset
+-   It is generalised and can work with any other dataset
 
 ```{r}
 
@@ -224,7 +224,36 @@ map(select(linelist,"age_years", "generation"),
 
 ```
 
-## 6. References
+## 7. Reproduce the graphs from last week
+
+```{r graphs}
+##Store the graphs
+hospital_names <- unique(linelist$hospital)
+graph_container <- vector("list", length = length(hospital_names))
+names(graph_container) <- hospital_names
+
+for(hosp in hospital_names){
+  
+    
+  graph_container[[hosp]]  <-  ggplot(data = filter(linelist, hospital == hosp )) +
+      geom_histogram(aes(x = date_onset)) +
+      labs(title = hosp, x = "data of onset")
+}
+
+ggpubr::ggarrange(plotlist = graph_container, ncol = 2, nrow = 3)
+
+#Using purrr
+with_graphs = linelist %>%
+  group_nest(hospital) %>%
+  mutate(graph = map(data, ~ggplot(data = .x) +
+      geom_histogram(aes(x = date_onset)) +
+      labs(title = hosp, x = "data of onset")))
+
+with_graphs$graph
+```
+
+
+## 8. References
 
 -   <https://epirhandbook.com/en/iteration-loops-and-lists.html>
 
