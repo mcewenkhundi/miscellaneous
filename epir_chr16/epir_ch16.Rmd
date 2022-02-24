@@ -99,10 +99,12 @@ linelist %>%
   filter(!is.na(ht_cm)) %>% ## get the total non missing values
     nrow()
 
-#using base R version
- sum(linelist[["ht_cm"]], na.rm = TRUE)/
-  sum(!is.na(linelist[["ht_cm"]]))
+mean(linelist$ht_cm)
 
+#using base R version
+ sum(linelist[["age_years"]], na.rm = TRUE)/
+  sum(!is.na(linelist[["age_years"]]))
+ 
 ```
 
 ## 5. Define a function for mean (to reduce repetition)
@@ -112,26 +114,34 @@ linelist %>%
 ```{r}
 
 #tidyverse version
+
 mean_fn_tidy <- function(num_var){
 
-  
-  
+  linelist %>%
+  pull({{num_var}}) %>% ## get the sum 
+  sum(na.rm = TRUE)/ ## devide
+linelist %>%
+  filter(!is.na({{num_var}})) %>% ## get the total non missing values
+    nrow()
 }
 
 #a baseR version
 mean_fn_base <- function(num_var){
- 
+
+   sum(linelist[[num_var]], na.rm = TRUE)/
+  sum(!is.na(linelist[[num_var]]))
+   
 }
 
 mean_fn_base("age_years")
 
-mean_fn_tidy("age_years")
+mean_fn_base("age_years")
 
-mean_fn_tidy(generation)
+mean_fn_base("generation")
 
-mean_fn_tidy(wt_kg)
+mean_fn_base("wt_kg")
 
-mean_fn_tidy(ht_cm)
+mean_fn_base("ht_cm")
 
 ```
 
@@ -143,24 +153,13 @@ mean_fn_tidy(ht_cm)
 var_ofinterest <- c("age_years", "generation")
 num_vec <- vector(mode="numeric", length = 2)
 
-for( )){ #can easely add other variables here
+for(i in 1:length(var_ofinterest)){ #can easely add other variables here
+
+num_vec[i] <- mean_fn_base(var_ofinterest[i])
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+num_vec
 ```
 
 ## 5. Disadvantages of a for loop
@@ -176,7 +175,7 @@ Introduce purrr::map
 ```{r maps}
 
 
-map(##, ##)
+map(c("age_years", "generation"),mean_fn_base)
 
 
 
@@ -192,7 +191,7 @@ map(##, ##)
 
 ```{r}
 
-
+map(select(linelist,age_years, generation), mean, na.rm = TRUE)
 
 
 
@@ -211,14 +210,14 @@ map(select(linelist,"age_years", "generation"),
     
   function(x){
     
- #use the base r version
+ mean(x, na.rm = TRUE)-3
     
   })
 
 
 map(select(linelist,"age_years", "generation"),
     
-  ~#uset the base R version
+  ~mean(.x, na.rm = TRUE)-3
     
   )
 
