@@ -22,7 +22,6 @@ pacman::p_load(
 # Wilcoxon rank sum test
 # Kruskal-Wallis test
 # Chi-squared test
-# Correlations between numeric variables
 
 linelist <- import("linelist_cleaned.rds")
 
@@ -58,6 +57,10 @@ chisq.test(linelist$gender, linelist$outcome)
 #Works with grouped data
 
 #Summary stats
+summary(linelist$age_years)
+
+summary(select(linelist, age, temp))
+
 linelist %>%
   rstatix::get_summary_stats(age, temp)
 
@@ -93,6 +96,17 @@ linelist %>%
   select(-1) %>% 
   chisq_test()
 
+#Cross tabs from gtsummary
+linelist %>%
+  tbl_cross(
+    row = gender,
+    col = outcome,
+    percent = "col" #row, cell
+  ) %>%
+  add_p()
+
+
+
 #gtsummary package
 #Produce pretty descriptive table for reports
 linelist %>% 
@@ -101,6 +115,7 @@ linelist %>%
   add_p()   
 
 #Can customise 
+#Age years, mean and sd, and t_test
 linelist %>% 
   select(gender,cough, fever, chills, age_years, outcome) %>%             # keep variables of interest
   tbl_summary(                               # produce summary table
@@ -109,6 +124,10 @@ linelist %>%
   add_p(age_years ~ "t.test")     
 
 #Other customisations
+#Change variable names
+#Table title
+#Characteristics to variable
+#Introduce the outcome title
 linelist %>% 
   select(gender,cough, fever, chills, age_years, outcome) %>%             # keep variables of interest
   tbl_summary(                               # produce summary table
@@ -131,12 +150,14 @@ linelist %>%
 #https://www.danieldsjoberg.com/gtsummary/articles/tbl_summary.html
 
 linelist %>% 
-  mutate(gender = factor(gender, levels = c("f","m"), labels = c("Female", "Male"))) %>%
+  mutate(gender = factor(gender, levels = c("f","m"),
+                         labels = c("Female", "Male"))) %>%
   select(gender,cough, fever, chills, age_years, wt_kg, outcome) %>%             # keep variables of interest
-  tbl_summary(                               # produce summary table
+  tbl_summary( # produce summary table
+    #type = list(c(chills, fever, cough) ~ "categorical"), #if you want to show yes and no's
     statistic = list(all_continuous() ~ "{mean} ({sd})",
                      all_categorical() ~ "{n} / {N} ({p}%)"), # specify what statistics to show
-    percent = "col", #change the row, col or cell percentage calculation here
+        percent = "col", #change the row, col or cell percentage calculation here
     by = outcome,                            # specify the grouping variable
     label = list(age_years ~ "Age years", # labels
                  gender ~ "Gender",
@@ -145,12 +166,14 @@ linelist %>%
                  cough ~ "Cough",
                  wt_kg ~ "Weight Kg"),
     missing_text= "Missing") %>%          #text for missing values              
-  add_p(age_years ~ "t.test") %>% 
+  add_p(all_continuous() ~ "t.test") %>% 
+  add_overall(last = TRUE) %>%
   modify_header(label ~ "**Variable**") %>%
   modify_spanning_header(c("stat_1", "stat_2") ~ "Treatment Outcome") %>%
-  modify_caption("**Table 1. Patient Characteristics**") %>%
+  modify_caption("Table 1. Patient Characteristics") %>%
   bold_labels() %>%
-  as_flex_table() %>% #convert to flextable and export to word
+  as_flex_table() %>%  #convert to flextable and export to word
+  theme_vanilla() %>% #style of lines  
   save_as_docx(path = "Overall baselline.docx")
 
 #Produce report for each clinic
@@ -175,12 +198,14 @@ for(clinic in clinic_names){
                    cough ~ "Cough",
                    wt_kg ~ "Weight Kg"),
       missing_text= "Missing") %>%          #text for missing values              
-    add_p(age_years ~ "t.test") %>% 
+    add_p(all_continuous() ~ "t.test") %>% 
+    add_overall(last = TRUE) %>% 
     modify_header(label ~ "**Variable**") %>%
     modify_spanning_header(c("stat_1", "stat_2") ~ "Treatment Outcome") %>%
-    modify_caption("Table 1. Patient Characteristics: {clinic}") %>%
+    modify_caption("Table 1. Patient Characteristics: {clinic}") %>% #include title name in the title of each table
     bold_labels() %>%
     as_flex_table() %>% #convert to flextable and export to word, https://community.rstudio.com/t/how-to-export-summary-table-into-word/99952/4
-    save_as_docx(path =paste0("Overall baselline ",clinic,".docx"))
+    theme_vanilla() %>% #style of lines #https://ardata-fr.github.io/flextable-book/index.html
+    save_as_docx(path = paste0("Overall baselline ",clinic,".docx"))
   
 }
