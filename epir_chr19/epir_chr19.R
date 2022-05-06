@@ -187,7 +187,7 @@ mv_reg <- explanatory_vars %>%  ## begin with vector of explanatory column names
 
 #Building models
 model1 <- glm(outcome ~ age_cat, family = "binomial", data = linelist)
-model2 <- glm(outcome ~ age_cat + gender, family = "binomial", data = linelist)
+model2 <- glm(outcome ~ age_cat*fever, family = "binomial", data = linelist)
 
 lmtest::lrtest(model1, model2)
 
